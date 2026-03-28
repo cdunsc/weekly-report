@@ -24,6 +24,41 @@ from log_config import setup_logging
 logger = logging.getLogger(__name__)
 
 CONFIG_FILE = "/opt/weekly-report/config.yaml"
+
+
+def _notify_failure(config: dict, failures: list[str]):
+    """Envia alerta de falha no Teams se houver erros de coleta."""
+    if not failures:
+        return
+    webhook_url = config.get("teams", {}).get("webhook_url", "")
+    if not webhook_url:
+        return
+    try:
+        import requests as req
+        card = {
+            "type": "AdaptiveCard",
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "version": "1.4",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "⚠️ Relatório Semanal — Falhas na Coleta",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "color": "Attention",
+                    "wrap": True,
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "\n".join(f"- {f}" for f in failures),
+                    "wrap": True,
+                },
+            ],
+        }
+        req.post(webhook_url, json=card, timeout=15)
+        logger.info("Alerta de falhas enviado ao Teams")
+    except Exception as e:
+        logger.error(f"Erro ao enviar alerta de falhas: {e}")
 OTRS_CACHE_FILE = "/opt/weekly-report/data/otrs_cache.json"
 
 
@@ -87,6 +122,7 @@ def main():
     args = parser.parse_args()
 
     config = load_config()
+    failures = []
 
     # --refresh implica --dry-run (sem envio, sem salvar histórico)
     if args.refresh:
@@ -134,6 +170,7 @@ def main():
         except Exception as e:
             logger.error("OTRS ERRO: %s", e)
             logger.exception("Detalhes:")
+            failures.append(f"OTRS: {e}")
             logger.info("Tentando usar cache...")
             otrs_queues = _load_otrs_cache(otrs_queues)
     else:
@@ -158,6 +195,7 @@ def main():
         except Exception as e:
             logger.error("AWS ERRO: %s", e)
             logger.exception("Detalhes:")
+            failures.append(f"AWS: {e}")
     else:
         logger.info("Pulando AWS")
 
@@ -173,6 +211,7 @@ def main():
         except Exception as e:
             logger.error("OCI ERRO: %s", e)
             logger.exception("Detalhes:")
+            failures.append(f"OCI: {e}")
     else:
         logger.info("Pulando OCI")
 
@@ -190,6 +229,7 @@ def main():
         except Exception as e:
             logger.error("Golden Cloud ERRO: %s", e)
             logger.exception("Detalhes:")
+            failures.append(f"Golden Cloud: {e}")
 
     # Monday.com
     monday_boards = []
@@ -204,6 +244,7 @@ def main():
         except Exception as e:
             logger.error("Monday.com ERRO: %s", e)
             logger.exception("Detalhes:")
+            failures.append(f"Monday.com: {e}")
 
     # 3. Gera relatório
     try:
@@ -217,6 +258,8 @@ def main():
         logger.error("REPORT ERRO: %s", e)
         logger.exception("Detalhes:")
         sys.exit(1)
+
+    _notify_failure(config, failures)
 
     # 4. Envia
     if args.dry_run:

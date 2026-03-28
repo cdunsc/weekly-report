@@ -9,3 +9,4 @@ msal>=1.28.0
 flask>=3.0.0
 flask-limiter>=3.5.0
 bcrypt>=4.1.0
+tenacity>=8.2.0

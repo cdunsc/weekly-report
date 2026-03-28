@@ -3,8 +3,14 @@ Coletor de custos OCI via Usage API.
 Conta única: custo consolidado + breakdown por serviço.
 """
 
+import logging
+
 import oci
 from datetime import datetime, timedelta
+
+from tenacity import retry, stop_after_attempt, wait_exponential, before_sleep_log
+
+logger = logging.getLogger(__name__)
 
 
 class OCICollector:
@@ -13,6 +19,8 @@ class OCICollector:
         oci_config = oci.config.from_file()
         self.usage_client = oci.usage_api.UsageapiClient(oci_config)
 
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=30),
+           before_sleep=before_sleep_log(logger, logging.WARNING))
     def collect(self) -> dict:
         """
         Coleta custos OCI do mês atual.

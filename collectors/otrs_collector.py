@@ -14,6 +14,8 @@ import requests
 from collections import Counter
 from datetime import datetime
 
+from tenacity import retry, stop_after_attempt, wait_exponential, before_sleep_log
+
 logger = logging.getLogger(__name__)
 
 
@@ -39,6 +41,8 @@ class OTRSCollector:
                 "queue_id": config.get("queue_id", 26),
             }]
 
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=30),
+           before_sleep=before_sleep_log(logger, logging.WARNING))
     def _login(self, session: requests.Session) -> str:
         """Login no painel OTRS e retorna o ChallengeToken."""
         resp = session.post(
@@ -64,6 +68,8 @@ class OTRSCollector:
 
         return match.group(1)
 
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=30),
+           before_sleep=before_sleep_log(logger, logging.WARNING))
     def _search_csv(self, session: requests.Session, token: str, queue_id: int) -> list[dict]:
         """Exporta todos os tickets de uma fila como CSV."""
         resp = session.post(

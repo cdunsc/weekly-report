@@ -10,6 +10,8 @@ import re
 import requests
 from datetime import datetime
 
+from tenacity import retry, stop_after_attempt, wait_exponential, before_sleep_log
+
 logger = logging.getLogger(__name__)
 
 
@@ -25,6 +27,8 @@ class GoldenCloudCollector:
         self.verify_ssl = config.get("verify_ssl", True)
         self.data_file = DATA_FILE
 
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=30),
+           before_sleep=before_sleep_log(logger, logging.WARNING))
     def _scrape(self) -> dict:
         """Login no portal e coleta custos via API interna."""
         session = requests.Session()

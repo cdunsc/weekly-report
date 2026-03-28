@@ -4,7 +4,13 @@ Workspace: Infraestrutura
 Boards: Projetos Cloud, Projetos TI Corporativa, Projetos DADOS (+ subelementos)
 """
 
+import logging
+
 import requests
+
+from tenacity import retry, stop_after_attempt, wait_exponential, before_sleep_log
+
+logger = logging.getLogger(__name__)
 
 
 MONDAY_API = "https://api.monday.com/v2"
@@ -53,6 +59,8 @@ class MondayCollector:
             self.board_ids = config.get("board_ids", [])
             self._filters = {}
 
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=30),
+           before_sleep=before_sleep_log(logger, logging.WARNING))
     def _query(self, query: str) -> dict:
         resp = requests.post(
             MONDAY_API,

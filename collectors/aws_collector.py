@@ -3,8 +3,14 @@ Coletor de custos AWS via Cost Explorer.
 Conta Payer: custo consolidado + breakdown por linked account.
 """
 
+import logging
+
 import boto3
 from datetime import datetime, timedelta
+
+from tenacity import retry, stop_after_attempt, wait_exponential, before_sleep_log
+
+logger = logging.getLogger(__name__)
 
 
 class AWSCollector:
@@ -19,6 +25,8 @@ class AWSCollector:
         end = (today + timedelta(days=1)).strftime("%Y-%m-%d")
         return start, end
 
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=30),
+           before_sleep=before_sleep_log(logger, logging.WARNING))
     def _query_costs(self, group_by: list = None, filter_expr: dict = None) -> dict:
         """Consulta Cost Explorer."""
         start, end = self._get_date_range()
