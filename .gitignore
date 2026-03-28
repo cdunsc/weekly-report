@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+venv/
+.env
+data/users.json
+data/reset_tokens.json
+data/golden_cloud.json
+data/otrs_cache.json
+data/cron.log
+*.csv
+config.yaml
