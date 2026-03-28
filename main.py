@@ -191,7 +191,7 @@ def main():
             aws = AWSCollector(config["aws"])
             aws_data = aws.collect()
             cloud_costs.append(aws_data)
-            logger.info("AWS Total: %s %,.2f", aws_data['currency'], aws_data['total_cost'])
+            logger.info("AWS Total: %s %.2f", aws_data['currency'], aws_data['total_cost'])
         except Exception as e:
             logger.error("AWS ERRO: %s", e)
             logger.exception("Detalhes:")
@@ -207,7 +207,7 @@ def main():
             oci_coll = OCICollector(config["oci"])
             oci_data = oci_coll.collect()
             cloud_costs.append(oci_data)
-            logger.info("OCI Total: %s %,.2f", oci_data['currency'], oci_data['total_cost'])
+            logger.info("OCI Total: %s %.2f", oci_data['currency'], oci_data['total_cost'])
         except Exception as e:
             logger.error("OCI ERRO: %s", e)
             logger.exception("Detalhes:")
@@ -223,7 +223,7 @@ def main():
             golden = GoldenCloudCollector(config["golden_cloud"])
             golden_data = golden.collect()
             cloud_costs.append(golden_data)
-            logger.info("Golden Cloud Total: %s %,.2f (%s)",
+            logger.info("Golden Cloud Total: %s %.2f (%s)",
                         golden_data['currency'], golden_data['total_cost'],
                         golden_data.get('status', ''))
         except Exception as e:
