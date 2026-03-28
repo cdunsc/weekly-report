@@ -13,6 +13,16 @@ class TeamsSender:
     def __init__(self, config: dict):
         self.webhook_url = config["webhook_url"]
 
+    @staticmethod
+    def _delta_text(deltas: dict, key: str) -> str:
+        """Returns delta indicator string like ' ▲ +12.1%' or empty string."""
+        d = deltas.get(key, {})
+        pct = d.get("pct")
+        if pct is None:
+            return ""
+        arrow = "▲" if pct > 0 else "▼" if pct < 0 else ""
+        return f" {arrow} {pct:+.1f}%" if pct != 0 else ""
+
     def send(self, report_data: dict, dashboard_url: str):
         """
         Envia resumo do relatório para o Teams via webhook (Adaptive Card com tabelas).
@@ -27,6 +37,8 @@ class TeamsSender:
         clouds = report_data.get("clouds", [])
         dollar_rate = report_data.get("dollar_rate", 0)
         total_brl = report_data.get("total_cloud_cost_brl", 0)
+
+        deltas = report_data.get("deltas", {})
 
         period = otrs_queues[0].get("period", {}) if otrs_queues else {}
         period_text = f"{period.get('start', '')} a {period.get('end', '')}"
@@ -62,10 +74,15 @@ class TeamsSender:
                     ],
                 },
             ]
+            # Build delta indicators for this queue
+            q_opened_delta = self._delta_text(deltas, f"{queue_name}_opened")
+            q_closed_delta = self._delta_text(deltas, f"{queue_name}_closed")
+            q_backlog_delta = self._delta_text(deltas, f"{queue_name}_backlog")
+
             chamados = [
-                ("Abertos", str(q.get("opened", 0))),
-                ("Fechados", str(q.get("closed", 0))),
-                ("Backlog", str(q.get("backlog", 0))),
+                ("Abertos", f"{q.get('opened', 0)}{q_opened_delta}"),
+                ("Fechados", f"{q.get('closed', 0)}{q_closed_delta}"),
+                ("Backlog", f"{q.get('backlog', 0)}{q_backlog_delta}"),
                 (f"1ª Resposta ≤ {frt_target}h (meta: 90%)", sla_frt_text),
                 (f"Resolução ≤ {res_target}h (meta: 90%)", sla_res_text),
             ]
@@ -108,26 +125,47 @@ class TeamsSender:
             },
         ]
         for c in clouds:
+            provider = c["provider"]
             original = f"{c.get('currency', 'USD')} {c['total_cost']:,.2f}"
             brl_value = f"BRL {c.get('total_cost_brl', c['total_cost']):,.2f}"
+            cost_delta = self._delta_text(deltas, f"cost_{provider}")
+            brl_display = f"{brl_value}{cost_delta}" if cost_delta else brl_value
             cloud_rows.append({
                 "type": "TableRow",
                 "cells": [
-                    {"type": "TableCell", "items": [{"type": "TextBlock", "text": c["provider"], "weight": "Bolder", "wrap": True}]},
+                    {"type": "TableCell", "items": [{"type": "TextBlock", "text": provider, "weight": "Bolder", "wrap": True}]},
                     {"type": "TableCell", "items": [{"type": "TextBlock", "text": original, "wrap": True}]},
-                    {"type": "TableCell", "items": [{"type": "TextBlock", "text": brl_value, "wrap": True}]},
+                    {"type": "TableCell", "items": [{"type": "TextBlock", "text": brl_display, "wrap": True}]},
                 ],
             })
         # Linha de total
+        total_delta = self._delta_text(deltas, "cost_total")
+        total_display = f"BRL {total_brl:,.2f}{total_delta}"
         cloud_rows.append({
             "type": "TableRow",
             "style": "accent",
             "cells": [
                 {"type": "TableCell", "items": [{"type": "TextBlock", "text": "TOTAL", "weight": "Bolder", "wrap": True}]},
                 {"type": "TableCell", "items": [{"type": "TextBlock", "text": "", "wrap": True}]},
-                {"type": "TableCell", "items": [{"type": "TextBlock", "text": f"BRL {total_brl:,.2f}", "weight": "Bolder", "wrap": True}]},
+                {"type": "TableCell", "items": [{"type": "TextBlock", "text": total_display, "weight": "Bolder", "wrap": True}]},
             ],
         })
+
+        # Top 3 contas AWS (se disponível)
+        aws_accounts_body = []
+        for c in clouds:
+            if c.get("provider") == "AWS" and c.get("accounts"):
+                top3 = c["accounts"][:3]
+                if top3:
+                    lines = [f"  {i+1}. {a.get('account_name', a.get('account_id', 'N/A'))} — USD {a['cost']:,.2f}" for i, a in enumerate(top3)]
+                    aws_accounts_body.append({
+                        "type": "TextBlock",
+                        "text": "💰 Top Contas AWS:\n" + "\n".join(lines),
+                        "wrap": True,
+                        "spacing": "Small",
+                        "isSubtle": True,
+                    })
+                break
 
         # Seção Monday.com (projetos)
         monday_boards = report_data.get("monday_boards", [])
@@ -148,18 +186,22 @@ class TeamsSender:
                     "cells": [
                         {"type": "TableCell", "items": [{"type": "TextBlock", "text": "Board", "weight": "Bolder", "wrap": True}]},
                         {"type": "TableCell", "items": [{"type": "TextBlock", "text": "Total", "weight": "Bolder", "wrap": True}]},
-                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": "Concluídos", "weight": "Bolder", "wrap": True}]},
+                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": "Feitos", "weight": "Bolder", "wrap": True}]},
+                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": "%", "weight": "Bolder", "wrap": True}]},
                     ],
                 },
             ]
             for board in monday_boards:
                 done = sum(board.get("status_summary", {}).get(s, 0) for s in ("Feito", "Concluído", "Done"))
+                total = board.get("total_projects", 0)
+                pct = f"{round(done / total * 100)}%" if total > 0 else "0%"
                 proj_rows.append({
                     "type": "TableRow",
                     "cells": [
                         {"type": "TableCell", "items": [{"type": "TextBlock", "text": board["board_name"], "wrap": True}]},
-                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": str(board["total_projects"]), "wrap": True}]},
+                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": str(total), "wrap": True}]},
                         {"type": "TableCell", "items": [{"type": "TextBlock", "text": str(done), "wrap": True}]},
+                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": pct, "wrap": True}]},
                     ],
                 })
             monday_body.append({
@@ -167,7 +209,7 @@ class TeamsSender:
                 "gridStyle": "accent",
                 "firstRowAsHeader": True,
                 "showGridLines": True,
-                "columns": [{"width": 3}, {"width": 1}, {"width": 1}],
+                "columns": [{"width": 3}, {"width": 1}, {"width": 1}, {"width": 1}],
                 "rows": proj_rows,
             })
 
@@ -219,6 +261,7 @@ class TeamsSender:
                     "columns": [{"width": 2}, {"width": 1}, {"width": 2}],
                     "rows": cloud_rows,
                 },
+                *aws_accounts_body,
                 *monday_body,
             ],
             "actions": [
