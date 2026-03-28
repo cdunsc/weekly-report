@@ -178,7 +178,7 @@ def main():
         otrs_queues = _load_otrs_cache(otrs_queues)
 
     # Compatibilidade: otrs_data aponta para a primeira fila
-    otrs_data = otrs_queues[0] if otrs_queues else empty_queue
+    otrs_data = otrs_queues[0] if otrs_queues else _empty_queue("CLOUD")
 
     # 2. Coleta custos
     cloud_costs = []

@@ -139,7 +139,7 @@ class GoldenCloudCollector:
                     "status": "OK",
                 }
             except Exception as e:
-                logger.warning("Scraping falhou (%s), usando cache local", e)
+                logger.exception("Scraping falhou, usando cache local")
                 # Fallback para cache
 
         # Fallback: input manual

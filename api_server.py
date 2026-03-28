@@ -30,6 +30,7 @@ from flask import (
 import yaml
 
 from env_loader import inject_secrets
+from log_config import setup_logging
 from auth import (
     verify_user,
     get_user,
@@ -40,6 +41,7 @@ from auth import (
     consume_reset_token,
     validate_password,
 )
+from collectors.otrs_collector import CLOSED_STATES
 
 CONFIG_FILE = "/opt/weekly-report/config.yaml"
 
@@ -353,14 +355,8 @@ def chamados_por_servico(service_filter):
         filtered = [t for t in tickets if t.get("service", "") == service_name]
 
     # Separa abertos e fechados
-    closed_states = {
-        "Fechado com êxito", "Fechado sem êxito", "fechado",
-        "fechado com êxito", "fechado sem êxito",
-        "fechado com solução de contorno", "Encerrado",
-        "Resolvido", "Indevido",
-    }
-    abertos = [t for t in filtered if t.get("state", "") not in closed_states]
-    fechados = [t for t in filtered if t.get("state", "") in closed_states]
+    abertos = [t for t in filtered if t.get("state", "") not in CLOSED_STATES]
+    fechados = [t for t in filtered if t.get("state", "") in CLOSED_STATES]
 
     otrs_panel_url = _load_config().get("otrs", {}).get("panel_url", "https://ticket.surf.com.br")
 
@@ -399,14 +395,8 @@ def chamados_por_solicitante(customer_filter):
     else:
         filtered = [t for t in tickets if t.get("customer", "").strip() == customer_name]
 
-    closed_states = {
-        "Fechado com êxito", "Fechado sem êxito", "fechado",
-        "fechado com êxito", "fechado sem êxito",
-        "fechado com solução de contorno", "Encerrado",
-        "Resolvido", "Indevido",
-    }
-    abertos = [t for t in filtered if t.get("state", "") not in closed_states]
-    fechados = [t for t in filtered if t.get("state", "") in closed_states]
+    abertos = [t for t in filtered if t.get("state", "") not in CLOSED_STATES]
+    fechados = [t for t in filtered if t.get("state", "") in CLOSED_STATES]
 
     otrs_panel_url = _load_config().get("otrs", {}).get("panel_url", "https://ticket.surf.com.br")
 
@@ -444,14 +434,8 @@ def chamados_por_atendente(owner_filter):
     else:
         filtered = [t for t in tickets if t.get("owner", "").strip() == owner_name]
 
-    closed_states = {
-        "Fechado com êxito", "Fechado sem êxito", "fechado",
-        "fechado com êxito", "fechado sem êxito",
-        "fechado com solução de contorno", "Encerrado",
-        "Resolvido", "Indevido",
-    }
-    abertos = [t for t in filtered if t.get("state", "") not in closed_states]
-    fechados = [t for t in filtered if t.get("state", "") in closed_states]
+    abertos = [t for t in filtered if t.get("state", "") not in CLOSED_STATES]
+    fechados = [t for t in filtered if t.get("state", "") in CLOSED_STATES]
 
     otrs_panel_url = _load_config().get("otrs", {}).get("panel_url", "https://ticket.surf.com.br")
 
@@ -491,6 +475,7 @@ def golden_cloud_api():
 
         return jsonify({"status": "ok", "saved": save_data})
     except Exception as e:
+        logger.error("Erro na API golden-cloud: %s", e)
         return jsonify({"status": "error", "message": str(e)}), 400
 
 
@@ -503,6 +488,7 @@ def golden_cloud_options():
 
 
 def main():
+    setup_logging()
     app.run(host="127.0.0.1", port=8080, debug=False)
 
 

@@ -1,0 +1,406 @@
+[
+  {
+    "date": "23/03/2026 14:26",
+    "period": {
+      "start": "2026-03-13",
+      "end": "2026-03-19"
+    },
+    "opened": 19,
+    "closed": 20,
+    "backlog": 8,
+    "avg_first_response": 5.68,
+    "avg_resolution": 6.22,
+    "cloud_costs": {
+      "AWS": 133818.03,
+      "OCI": 23318.11,
+      "Golden Cloud": 25910.03
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 19,
+        "closed": 20,
+        "backlog": 8,
+        "avg_first_response": 5.68,
+        "avg_resolution": 6.22,
+        "pct_first_response": 100.0,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 159,
+        "closed": 161,
+        "backlog": 43,
+        "avg_first_response": 5.55,
+        "avg_resolution": 5.0,
+        "pct_first_response": 45.7,
+        "pct_resolution": 94.5
+      }
+    }
+  },
+  {
+    "date": "26/03/2026 19:40",
+    "period": {
+      "start": "2026-03-13",
+      "end": "2026-03-19"
+    },
+    "opened": 19,
+    "closed": 20,
+    "backlog": 6,
+    "avg_first_response": 5.68,
+    "avg_resolution": 6.22,
+    "cloud_costs": {
+      "AWS": 148758.14,
+      "OCI": 28115.77,
+      "Golden Cloud": 25910.03
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 19,
+        "closed": 20,
+        "backlog": 6,
+        "avg_first_response": 5.68,
+        "avg_resolution": 6.22,
+        "pct_first_response": 100.0,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 159,
+        "closed": 161,
+        "backlog": 49,
+        "avg_first_response": 5.55,
+        "avg_resolution": 6.33,
+        "pct_first_response": 45.7,
+        "pct_resolution": 92.6
+      }
+    }
+  },
+  {
+    "date": "27/03/2026 09:02",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 7,
+    "avg_first_response": 5.45,
+    "avg_resolution": 6.18,
+    "cloud_costs": {
+      "AWS": 153943.5,
+      "OCI": 28693.27,
+      "Golden Cloud": 25910.03
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 7,
+        "avg_first_response": 5.45,
+        "avg_resolution": 6.18,
+        "pct_first_response": 100.0,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 50,
+        "avg_first_response": 2.86,
+        "avg_resolution": 3.83,
+        "pct_first_response": 50.7,
+        "pct_resolution": 97.1
+      }
+    }
+  },
+  {
+    "date": "27/03/2026 14:56",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 5,
+    "avg_first_response": 7.52,
+    "avg_resolution": 9.52,
+    "cloud_costs": {
+      "AWS": 153943.5,
+      "OCI": 28916.51,
+      "Golden Cloud": 34959.93
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 5,
+        "avg_first_response": 7.52,
+        "avg_resolution": 9.52,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 43,
+        "avg_first_response": 3.63,
+        "avg_resolution": 4.27,
+        "pct_first_response": 47.3,
+        "pct_resolution": 97.2
+      }
+    }
+  },
+  {
+    "date": "27/03/2026 14:58",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 5,
+    "avg_first_response": 7.52,
+    "avg_resolution": 9.52,
+    "cloud_costs": {
+      "AWS": 153943.5,
+      "OCI": 28916.51,
+      "Golden Cloud": 34959.93
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 5,
+        "avg_first_response": 7.52,
+        "avg_resolution": 9.52,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 43,
+        "avg_first_response": 3.63,
+        "avg_resolution": 4.27,
+        "pct_first_response": 47.3,
+        "pct_resolution": 97.2
+      }
+    }
+  },
+  {
+    "date": "27/03/2026 17:39",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 5,
+    "avg_first_response": 7.52,
+    "avg_resolution": 9.52,
+    "cloud_costs": {
+      "Golden Cloud": 34959.93
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 5,
+        "avg_first_response": 7.52,
+        "avg_resolution": 9.52,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 43,
+        "avg_first_response": 3.63,
+        "avg_resolution": 4.27,
+        "pct_first_response": 47.3,
+        "pct_resolution": 97.2
+      }
+    }
+  },
+  {
+    "date": "27/03/2026 17:40",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 5,
+    "avg_first_response": 7.52,
+    "avg_resolution": 9.52,
+    "cloud_costs": {
+      "AWS": 155592.23,
+      "Golden Cloud": 34959.93
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 5,
+        "avg_first_response": 7.52,
+        "avg_resolution": 9.52,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 43,
+        "avg_first_response": 3.63,
+        "avg_resolution": 4.27,
+        "pct_first_response": 47.3,
+        "pct_resolution": 97.2
+      }
+    }
+  },
+  {
+    "date": "27/03/2026 17:42",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 5,
+    "avg_first_response": 7.52,
+    "avg_resolution": 9.52,
+    "cloud_costs": {
+      "AWS": 155592.23,
+      "OCI": 29101.05,
+      "Golden Cloud": 34959.93
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 5,
+        "avg_first_response": 7.52,
+        "avg_resolution": 9.52,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 43,
+        "avg_first_response": 3.63,
+        "avg_resolution": 4.27,
+        "pct_first_response": 47.3,
+        "pct_resolution": 97.2
+      }
+    }
+  },
+  {
+    "date": "27/03/2026 19:47",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 7,
+    "avg_first_response": 7.52,
+    "avg_resolution": 9.52,
+    "cloud_costs": {
+      "AWS": 155592.23,
+      "OCI": 29195.25,
+      "Golden Cloud": 34959.93
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 7,
+        "avg_first_response": 7.52,
+        "avg_resolution": 9.52,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "27/03/2026 19:51",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 7,
+    "avg_first_response": 7.52,
+    "avg_resolution": 9.52,
+    "cloud_costs": {
+      "AWS": 155592.23,
+      "OCI": 29195.25,
+      "Golden Cloud": 34959.93
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 7,
+        "avg_first_response": 7.52,
+        "avg_resolution": 9.52,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 38,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "28/03/2026 04:47",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 7,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "cloud_costs": {
+      "AWS": 157471.22,
+      "OCI": 29647.45,
+      "Golden Cloud": 34959.93
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 7,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  }
+]

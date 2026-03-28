@@ -2,10 +2,15 @@ __pycache__/
 *.pyc
 venv/
 .env
+.env.local
 data/users.json
 data/reset_tokens.json
 data/golden_cloud.json
 data/otrs_cache.json
 data/cron.log
+data/*.log
 *.csv
+*.log
 config.yaml
+.pytest_cache/
+*.egg-info/
