@@ -19,10 +19,18 @@ RESET_TOKENS_FILE = "/opt/weekly-report/data/reset_tokens.json"
 
 
 def _load_users() -> dict:
-    if os.path.exists(USERS_FILE):
+    if not os.path.exists(USERS_FILE):
+        return {}
+    try:
         with open(USERS_FILE) as f:
-            return json.load(f)
-    return {}
+            data = json.load(f)
+        if not isinstance(data, dict):
+            logger.warning("users.json não é um dict, retornando vazio")
+            return {}
+        return data
+    except (json.JSONDecodeError, OSError) as e:
+        logger.error(f"Erro ao carregar users.json: {e}")
+        return {}
 
 
 def _save_users(users: dict):
@@ -32,10 +40,18 @@ def _save_users(users: dict):
 
 
 def _load_tokens() -> dict:
-    if os.path.exists(RESET_TOKENS_FILE):
+    if not os.path.exists(RESET_TOKENS_FILE):
+        return {}
+    try:
         with open(RESET_TOKENS_FILE) as f:
-            return json.load(f)
-    return {}
+            data = json.load(f)
+        if not isinstance(data, dict):
+            logger.warning("reset_tokens.json não é um dict, retornando vazio")
+            return {}
+        return data
+    except (json.JSONDecodeError, OSError) as e:
+        logger.error(f"Erro ao carregar reset_tokens.json: {e}")
+        return {}
 
 
 def _save_tokens(tokens: dict):

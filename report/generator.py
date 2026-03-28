@@ -163,9 +163,23 @@ class ReportGenerator:
             json.dump(history, f, indent=2)
 
     def _load_history(self) -> list:
-        """Carrega histórico de relatórios anteriores."""
+        """Carrega histórico de relatórios anteriores com validação."""
         history_file = os.path.join(DATA_DIR, "history.json")
-        if os.path.exists(history_file):
+        if not os.path.exists(history_file):
+            return []
+        try:
             with open(history_file) as f:
-                return json.load(f)
-        return []
+                data = json.load(f)
+            if not isinstance(data, list):
+                logger.warning("history.json não é uma lista, ignorando")
+                return []
+            valid = []
+            for entry in data:
+                if isinstance(entry, dict) and "date" in entry:
+                    valid.append(entry)
+                else:
+                    logger.warning(f"Entrada inválida no histórico ignorada: {entry}")
+            return valid
+        except (json.JSONDecodeError, OSError) as e:
+            logger.error(f"Erro ao carregar history.json: {e}")
+            return []

@@ -284,6 +284,29 @@ def reset_password(token):
     )
 
 
+@app.route("/dashboard/health")
+def health():
+    """Health check — verifica se o serviço está rodando e dados atualizados."""
+    checks = {"status": "ok", "service": "weekly-report-dashboard"}
+
+    # Verifica se dashboard existe
+    index_path = os.path.join(DASHBOARD_DIR, "index.html")
+    if os.path.exists(index_path):
+        mtime = os.path.getmtime(index_path)
+        age_hours = (datetime.now().timestamp() - mtime) / 3600
+        checks["dashboard_age_hours"] = round(age_hours, 1)
+        checks["dashboard_stale"] = age_hours > 168  # >7 dias
+    else:
+        checks["dashboard_age_hours"] = None
+        checks["dashboard_stale"] = True
+
+    if checks.get("dashboard_stale"):
+        checks["status"] = "degraded"
+
+    status_code = 200 if checks["status"] == "ok" else 503
+    return jsonify(checks), status_code
+
+
 @app.route("/dashboard/")
 @app.route("/dashboard")
 @login_required
