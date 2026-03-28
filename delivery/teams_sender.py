@@ -129,6 +129,48 @@ class TeamsSender:
             ],
         })
 
+        # Seção Monday.com (projetos)
+        monday_boards = report_data.get("monday_boards", [])
+        monday_body = []
+        if monday_boards:
+            monday_body.append({
+                "type": "TextBlock",
+                "text": "📋 PROJETOS (Monday.com)",
+                "weight": "Bolder",
+                "color": "Accent",
+                "spacing": "Large",
+                "wrap": True,
+            })
+            proj_rows = [
+                {
+                    "type": "TableRow",
+                    "style": "accent",
+                    "cells": [
+                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": "Board", "weight": "Bolder", "wrap": True}]},
+                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": "Total", "weight": "Bolder", "wrap": True}]},
+                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": "Concluídos", "weight": "Bolder", "wrap": True}]},
+                    ],
+                },
+            ]
+            for board in monday_boards:
+                done = sum(board.get("status_summary", {}).get(s, 0) for s in ("Feito", "Concluído", "Done"))
+                proj_rows.append({
+                    "type": "TableRow",
+                    "cells": [
+                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": board["board_name"], "wrap": True}]},
+                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": str(board["total_projects"]), "wrap": True}]},
+                        {"type": "TableCell", "items": [{"type": "TextBlock", "text": str(done), "wrap": True}]},
+                    ],
+                })
+            monday_body.append({
+                "type": "Table",
+                "gridStyle": "accent",
+                "firstRowAsHeader": True,
+                "showGridLines": True,
+                "columns": [{"width": 3}, {"width": 1}, {"width": 1}],
+                "rows": proj_rows,
+            })
+
         payload = {
             "type": "AdaptiveCard",
             "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
@@ -177,6 +219,7 @@ class TeamsSender:
                     "columns": [{"width": 2}, {"width": 1}, {"width": 2}],
                     "rows": cloud_rows,
                 },
+                *monday_body,
             ],
             "actions": [
                 {

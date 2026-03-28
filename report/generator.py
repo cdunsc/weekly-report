@@ -64,6 +64,7 @@ class ReportGenerator:
 
         # Carrega histórico para gráficos
         history = self._load_history()
+        report_data["deltas"] = self._calc_deltas(report_data, history)
         report_data["history"] = history
 
         # Gera dashboard HTML
@@ -148,6 +149,26 @@ class ReportGenerator:
                 "pct_resolution": q.get("pct_resolution"),
             }
 
+        cloud_details = {}
+        for c in report_data["clouds"]:
+            provider = c["provider"]
+            detail = {
+                "total_cost": c["total_cost"],
+                "currency": c.get("currency", "USD"),
+                "total_cost_brl": c.get("total_cost_brl", c["total_cost"]),
+            }
+            if c.get("accounts"):
+                detail["accounts"] = [
+                    {"name": a.get("account_name", a.get("account_id", "")), "cost": a["cost"]}
+                    for a in c["accounts"][:10]
+                ]
+            if c.get("top_services"):
+                detail["top_services"] = [
+                    {"service": s["service"], "cost": s["cost"]}
+                    for s in c["top_services"][:5]
+                ]
+            cloud_details[provider] = detail
+
         entry = {
             "date": report_data["generated_at"],
             "period": report_data["otrs"].get("period", {}),
@@ -161,6 +182,7 @@ class ReportGenerator:
             "cloud_costs": {
                 c["provider"]: c["total_cost"] for c in report_data["clouds"]
             },
+            "cloud_details": cloud_details,
             "queues": queues_snapshot,
         }
 
@@ -170,6 +192,52 @@ class ReportGenerator:
 
         with open(history_file, "w") as f:
             json.dump(history, f, indent=2)
+
+    def _calc_deltas(self, report_data: dict, history: list) -> dict:
+        """Calcula variação percentual vs semana anterior."""
+        deltas = {}
+        if len(history) < 1:
+            return deltas
+
+        prev = history[-1]
+
+        # Delta custos por provider
+        prev_costs = prev.get("cloud_costs", {})
+        for c in report_data["clouds"]:
+            provider = c["provider"]
+            current = c.get("total_cost_brl", c["total_cost"])
+            previous = prev_costs.get(provider, 0)
+            if previous > 0:
+                pct = round((current - previous) / previous * 100, 1)
+                deltas[f"cost_{provider}"] = {"current": current, "previous": previous, "pct": pct}
+
+        # Delta total
+        current_total = report_data.get("total_cloud_cost_brl", 0)
+        prev_total = sum(prev_costs.values()) if prev_costs else 0
+        if prev_total > 0:
+            deltas["cost_total"] = {
+                "current": current_total,
+                "previous": prev_total,
+                "pct": round((current_total - prev_total) / prev_total * 100, 1),
+            }
+
+        # Delta chamados por fila
+        prev_queues = prev.get("queues", {})
+        for q in report_data.get("otrs_queues", []):
+            qname = q["queue_name"]
+            prev_q = prev_queues.get(qname, {})
+            for field in ("opened", "closed", "backlog"):
+                curr_val = q.get(field, 0)
+                prev_val = prev_q.get(field, 0)
+                if prev_val > 0:
+                    pct = round((curr_val - prev_val) / prev_val * 100, 1)
+                elif curr_val > 0:
+                    pct = 100.0
+                else:
+                    pct = 0.0
+                deltas[f"{qname}_{field}"] = {"current": curr_val, "previous": prev_val, "pct": pct}
+
+        return deltas
 
     def _load_history(self) -> list:
         """Carrega histórico de relatórios anteriores com validação."""
