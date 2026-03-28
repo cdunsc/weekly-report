@@ -7,6 +7,7 @@ data/users.json
 data/reset_tokens.json
 data/golden_cloud.json
 data/otrs_cache.json
+data/history.json
 data/cron.log
 data/*.log
 *.csv
@@ -14,3 +15,4 @@ data/*.log
 config.yaml
 .pytest_cache/
 *.egg-info/
+.superpowers/
