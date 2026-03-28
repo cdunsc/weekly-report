@@ -46,10 +46,26 @@ class ReportGenerator:
                 c["total_cost_brl"] = c["total_cost"]
             total_brl += c["total_cost_brl"]
 
+        # Extrai detalhes de custo por provider (para templates)
+        cloud_details = {}
+        for c in cloud_costs:
+            provider = c.get("provider", "")
+            detail = {
+                "total_cost": c["total_cost"],
+                "currency": c.get("currency", "USD"),
+                "total_cost_brl": c.get("total_cost_brl", c["total_cost"]),
+            }
+            if c.get("accounts"):
+                detail["accounts"] = c["accounts"]
+            if c.get("top_services"):
+                detail["top_services"] = c["top_services"]
+            cloud_details[provider] = detail
+
         report_data = {
             "generated_at": datetime.now().strftime("%d/%m/%Y %H:%M"),
             "otrs": otrs_data,
             "clouds": cloud_costs,
+            "cloud_details": cloud_details,
             "total_cloud_cost_brl": round(total_brl, 2),
             "dollar_rate": dollar_rate,
             "dashboard_url": self.base_url,
