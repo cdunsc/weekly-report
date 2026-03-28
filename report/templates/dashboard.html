@@ -1241,13 +1241,45 @@
 </div>{# /app-layout #}
 
 <script>
-// === Main tab switching ===
-document.querySelectorAll('.tab-btn').forEach(btn => {
+// === Register ChartDataLabels plugin & dark theme defaults ===
+Chart.register(ChartDataLabels);
+Chart.defaults.color = '#7d8590';
+Chart.defaults.font.family = "'Inter', 'Segoe UI', system-ui, sans-serif";
+Chart.defaults.plugins.datalabels = { display: false };
+
+const DARK = {
+    grid: 'rgba(48,54,61,0.5)',
+    tick: '#7d8590',
+    tooltipBg: '#1c2128',
+    tooltipBorder: '#30363d',
+    palette: ['#2563eb','#3b82f6','#60a5fa','#93c5fd','#2ea043','#d29922','#f85149','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#6366f1','#14b8a6','#f59e0b'],
+};
+
+const darkTooltip = {
+    backgroundColor: '#1c2128',
+    borderColor: '#30363d',
+    borderWidth: 1,
+    titleColor: '#e6edf3',
+    bodyColor: '#e6edf3',
+    cornerRadius: 6,
+    padding: 10,
+    titleFont: { weight: '600' },
+    bodyFont: { size: 12 },
+};
+
+// === Sidebar navigation ===
+const sectionTitles = { cloud: 'Cloud', ti: 'TI Corporativo', seguranca: 'Seguranca', diario: 'Diario (D-1)' };
+document.querySelectorAll('.sidebar-nav button[data-tab]').forEach(btn => {
     btn.addEventListener('click', function() {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+        document.querySelectorAll('.sidebar-nav button').forEach(el => el.classList.remove('active'));
+        const tabEl = document.getElementById('tab-' + this.dataset.tab);
+        if (tabEl) tabEl.classList.add('active');
         this.classList.add('active');
+        document.getElementById('sectionTitle').textContent = sectionTitles[this.dataset.tab] || this.dataset.tab;
+        // Close mobile sidebar
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('active');
     });
 });
 
@@ -1262,134 +1294,237 @@ document.querySelectorAll('.subtab-btn').forEach(btn => {
     });
 });
 
-// --- Chamados TI: gráficos ---
+// === Mobile hamburger toggle ===
+(function() {
+    const hamburger = document.getElementById('hamburgerBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (hamburger && sidebar) {
+        hamburger.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            if (overlay) overlay.classList.toggle('active');
+        });
+    }
+    if (overlay) {
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+    }
+})();
+
+// === Chart helpers ===
+function createHBar(canvasId, labels, data, colors) {
+    const el = document.getElementById(canvasId);
+    if (!el || !data.length) return null;
+    return new Chart(el, {
+        type: 'bar',
+        data: {
+            labels: labels.map(l => l.length > 25 ? l.substring(0, 25) + '\u2026' : l),
+            datasets: [{
+                label: 'Chamados',
+                data: data,
+                backgroundColor: colors || data.map((_, i) => DARK.palette[i % DARK.palette.length]),
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: darkTooltip,
+                datalabels: {
+                    display: true,
+                    anchor: 'end',
+                    align: 'end',
+                    color: '#e6edf3',
+                    font: { size: 11, weight: '600' },
+                },
+            },
+            scales: {
+                x: { ticks: { color: DARK.tick, stepSize: 1 }, grid: { color: DARK.grid } },
+                y: { ticks: { color: DARK.tick, font: { size: 11 } }, grid: { display: false } },
+            },
+        },
+    });
+}
+
+function createDoughnut(canvasId, labels, data, colors) {
+    const el = document.getElementById(canvasId);
+    if (!el || !data.length) return null;
+    const total = data.reduce((a, b) => a + b, 0);
+    return new Chart(el, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors || data.map((_, i) => DARK.palette[i % DARK.palette.length]),
+                borderWidth: 2,
+                borderColor: '#1c2128',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: { color: DARK.tick, font: { size: 11 }, padding: 8, usePointStyle: true },
+                },
+                tooltip: darkTooltip,
+                datalabels: {
+                    display: true,
+                    color: '#e6edf3',
+                    font: { size: 11, weight: '600' },
+                    formatter: (value) => total > 0 ? Math.round(value / total * 100) + '%' : '',
+                },
+            },
+        },
+    });
+}
+
+// --- Chamados TI: graficos ---
 {% set ns_ti_js = namespace(queue=none) %}
 {% for q in otrs_queues %}{% if q.queue_name == 'TI' %}{% set ns_ti_js.queue = q %}{% endif %}{% endfor %}
 {% set ti_queue_js = ns_ti_js.queue %}
 {% if ti_queue_js and ti_queue_js.top_requesters %}
 (function() {
-    const palette = ['#4361ee','#0f9d58','#e65100','#d32f2f','#f9a825','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#6366f1','#14b8a6','#f59e0b','#ef4444','#8b5cf6'];
     const requesters = {{ ti_queue_js.top_requesters | tojson }};
-    const reqEl = document.getElementById('topRequestersChart');
-    if (reqEl && requesters.length) {
-        new Chart(reqEl, { type: 'bar', data: { labels: requesters.map(r => r.name.length > 25 ? r.name.substring(0, 25) + '…' : r.name), datasets: [{ label: 'Chamados', data: requesters.map(r => r.count), backgroundColor: requesters.map((_, i) => palette[i % palette.length]), borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#7b8094', stepSize: 1 }, grid: { color: '#e3e6ef' } }, y: { ticks: { color: '#7b8094', font: { size: 11 } }, grid: { display: false } } } } });
-    }
+    createHBar('topRequestersChart', requesters.map(r => r.name), requesters.map(r => r.count));
+
     const services = {{ ti_queue_js.service_breakdown | tojson }};
-    const svcEl = document.getElementById('serviceBreakdownChart');
-    if (svcEl && services.length) {
-        new Chart(svcEl, { type: 'doughnut', data: { labels: services.map(s => s.service), datasets: [{ data: services.map(s => s.count), backgroundColor: services.map((_, i) => palette[i % palette.length]), borderWidth: 2, borderColor: '#ffffff' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#7b8094', font: { size: 11 }, padding: 8, usePointStyle: true } } } } });
-    }
+    createDoughnut('serviceBreakdownChart', services.map(s => s.service), services.map(s => s.count));
+
     {% if ti_queue_js.owner_breakdown %}
     const ownersTI = {{ ti_queue_js.owner_breakdown | tojson }};
-    const ownElTI = document.getElementById('ownerBreakdownChartTI');
-    if (ownElTI && ownersTI.length) {
-        new Chart(ownElTI, { type: 'bar', data: { labels: ownersTI.map(o => o.name.length > 25 ? o.name.substring(0, 25) + '…' : o.name), datasets: [{ label: 'Chamados', data: ownersTI.map(o => o.count), backgroundColor: ownersTI.map((_, i) => palette[i % palette.length]), borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#7b8094', stepSize: 1 }, grid: { color: '#e3e6ef' } }, y: { ticks: { color: '#7b8094', font: { size: 11 } }, grid: { display: false } } } } });
-    }
+    createHBar('ownerBreakdownChartTI', ownersTI.map(o => o.name), ownersTI.map(o => o.count));
     {% endif %}
 })();
 {% endif %}
 
-// --- Chamados CLOUD: gráficos ---
+// --- Chamados CLOUD: graficos ---
 {% set ns_cloud_js = namespace(queue=none) %}
 {% for q in otrs_queues %}{% if q.queue_name == 'CLOUD' %}{% set ns_cloud_js.queue = q %}{% endif %}{% endfor %}
 {% set cloud_queue_js = ns_cloud_js.queue %}
 {% if cloud_queue_js and cloud_queue_js.top_requesters %}
 (function() {
-    const palette = ['#4361ee','#0f9d58','#e65100','#d32f2f','#f9a825','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#6366f1','#14b8a6','#f59e0b','#ef4444','#8b5cf6'];
     const requesters = {{ cloud_queue_js.top_requesters | tojson }};
-    const reqEl = document.getElementById('topRequestersChartCloud');
-    if (reqEl && requesters.length) {
-        new Chart(reqEl, { type: 'bar', data: { labels: requesters.map(r => r.name.length > 25 ? r.name.substring(0, 25) + '…' : r.name), datasets: [{ label: 'Chamados', data: requesters.map(r => r.count), backgroundColor: requesters.map((_, i) => palette[i % palette.length]), borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#7b8094', stepSize: 1 }, grid: { color: '#e3e6ef' } }, y: { ticks: { color: '#7b8094', font: { size: 11 } }, grid: { display: false } } } } });
-    }
+    createHBar('topRequestersChartCloud', requesters.map(r => r.name), requesters.map(r => r.count));
+
     const services = {{ cloud_queue_js.service_breakdown | tojson }};
-    const svcEl = document.getElementById('serviceBreakdownChartCloud');
-    if (svcEl && services.length) {
-        new Chart(svcEl, { type: 'doughnut', data: { labels: services.map(s => s.service), datasets: [{ data: services.map(s => s.count), backgroundColor: services.map((_, i) => palette[i % palette.length]), borderWidth: 2, borderColor: '#ffffff' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#7b8094', font: { size: 11 }, padding: 8, usePointStyle: true } } } } });
-    }
+    createDoughnut('serviceBreakdownChartCloud', services.map(s => s.service), services.map(s => s.count));
+
     {% if cloud_queue_js.owner_breakdown %}
     const owners = {{ cloud_queue_js.owner_breakdown | tojson }};
-    const ownEl = document.getElementById('ownerBreakdownChartCloud');
-    if (ownEl && owners.length) {
-        new Chart(ownEl, { type: 'bar', data: { labels: owners.map(o => o.name.length > 25 ? o.name.substring(0, 25) + '…' : o.name), datasets: [{ label: 'Chamados', data: owners.map(o => o.count), backgroundColor: owners.map((_, i) => palette[i % palette.length]), borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#7b8094', stepSize: 1 }, grid: { color: '#e3e6ef' } }, y: { ticks: { color: '#7b8094', font: { size: 11 } }, grid: { display: false } } } } });
-    }
+    createHBar('ownerBreakdownChartCloud', owners.map(o => o.name), owners.map(o => o.count));
     {% endif %}
 })();
 {% endif %}
 
-// --- Diário D-1: gráficos ---
+// --- Diario D-1: graficos ---
 {% if otrs_daily_queues %}
 (function() {
-    const palette = ['#4361ee','#0f9d58','#e65100','#d32f2f','#f9a825','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#6366f1','#14b8a6','#f59e0b','#ef4444','#8b5cf6'];
     const dailyQueues = {{ otrs_daily_queues | tojson }};
     dailyQueues.forEach(function(dq) {
         const qName = dq.queue_name;
         const reqData = dq.top_requesters || [];
-        const reqEl = document.getElementById('topRequestersDaily_' + qName);
-        if (reqEl && reqData.length) {
-            new Chart(reqEl, { type: 'bar', data: { labels: reqData.map(r => r.name.length > 25 ? r.name.substring(0, 25) + '…' : r.name), datasets: [{ label: 'Chamados', data: reqData.map(r => r.count), backgroundColor: reqData.map((_, i) => palette[i % palette.length]), borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#7b8094', stepSize: 1 }, grid: { color: '#e3e6ef' } }, y: { ticks: { color: '#7b8094', font: { size: 11 } }, grid: { display: false } } } } });
-        }
+        createHBar('topRequestersDaily_' + qName, reqData.map(r => r.name), reqData.map(r => r.count));
+
         const svcData = dq.service_breakdown || [];
-        const svcEl = document.getElementById('serviceDaily_' + qName);
-        if (svcEl && svcData.length) {
-            new Chart(svcEl, { type: 'doughnut', data: { labels: svcData.map(s => s.service), datasets: [{ data: svcData.map(s => s.count), backgroundColor: svcData.map((_, i) => palette[i % palette.length]), borderWidth: 2, borderColor: '#ffffff' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#7b8094', font: { size: 11 }, padding: 8, usePointStyle: true } } } } });
-        }
+        createDoughnut('serviceDaily_' + qName, svcData.map(s => s.service), svcData.map(s => s.count));
+
         const ownData = dq.owner_breakdown || [];
-        const ownEl = document.getElementById('ownerDaily_' + qName);
-        if (ownEl && ownData.length) {
-            new Chart(ownEl, { type: 'bar', data: { labels: ownData.map(o => o.name.length > 25 ? o.name.substring(0, 25) + '…' : o.name), datasets: [{ label: 'Chamados', data: ownData.map(o => o.count), backgroundColor: ownData.map((_, i) => palette[i % palette.length]), borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#7b8094', stepSize: 1 }, grid: { color: '#e3e6ef' } }, y: { ticks: { color: '#7b8094', font: { size: 11 } }, grid: { display: false } } } } });
-        }
+        createHBar('ownerDaily_' + qName, ownData.map(o => o.name), ownData.map(o => o.count));
     });
 })();
 {% endif %}
 
-// --- Histórico ---
+// --- Historico ---
 {% if history|length >= 1 %}
-const historyData = {{ history | tojson }};
-const labels = historyData.map(h => h.period ? h.period.end || h.date : h.date);
-const gridColor = '#e3e6ef';
-const tickColor = '#7b8094';
-const queueNames = {{ otrs_queues | map(attribute='queue_name') | list | tojson }};
+(function() {
+    const historyData = {{ history | tojson }};
+    const labels = historyData.map(h => h.period ? h.period.end || h.date : h.date);
+    const queueNames = {{ otrs_queues | map(attribute='queue_name') | list | tojson }};
 
-function getQueueHistory(queueName) {
-    return historyData.map(h => {
-        if (h.queues && h.queues[queueName]) return h.queues[queueName];
-        if (queueName === queueNames[0]) return { opened: h.opened || 0, closed: h.closed || 0, backlog: h.backlog || 0, pct_first_response: h.pct_first_response || null, pct_resolution: h.pct_resolution || null };
-        return { opened: 0, closed: 0, backlog: 0, pct_first_response: null, pct_resolution: null };
+    function getQueueHistory(queueName) {
+        return historyData.map(h => {
+            if (h.queues && h.queues[queueName]) return h.queues[queueName];
+            if (queueName === queueNames[0]) return { opened: h.opened || 0, closed: h.closed || 0, backlog: h.backlog || 0, pct_first_response: h.pct_first_response || null, pct_resolution: h.pct_resolution || null };
+            return { opened: 0, closed: 0, backlog: 0, pct_first_response: null, pct_resolution: null };
+        });
+    }
+
+    const darkScales = {
+        x: { ticks: { color: DARK.tick }, grid: { color: DARK.grid } },
+        y: { ticks: { color: DARK.tick }, grid: { color: DARK.grid } },
+    };
+
+    queueNames.forEach(qName => {
+        const qData = getQueueHistory(qName);
+        const ticketsEl = document.getElementById('ticketsChart_' + qName);
+        const slaEl = document.getElementById('slaChart_' + qName);
+
+        if (ticketsEl) {
+            new Chart(ticketsEl, {
+                type: 'bar',
+                data: { labels: labels, datasets: [
+                    { label: 'Abertos', data: qData.map(d => d.opened), backgroundColor: '#2563eb', borderRadius: 3 },
+                    { label: 'Fechados', data: qData.map(d => d.closed), backgroundColor: '#2ea043', borderRadius: 3 },
+                    { label: 'Backlog', data: qData.map(d => d.backlog), type: 'line', borderColor: '#d29922', backgroundColor: 'rgba(210,153,34,0.1)', fill: false, tension: 0.35, pointRadius: 3, pointBackgroundColor: '#d29922' },
+                ] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: DARK.tick, font: { family: "'Inter'", size: 11 } } }, tooltip: darkTooltip, datalabels: { display: false } },
+                    scales: darkScales,
+                },
+            });
+        }
+
+        if (slaEl) {
+            new Chart(slaEl, {
+                type: 'line',
+                data: { labels: labels, datasets: [
+                    { label: '1a Resposta \u2264 24h (%)', data: qData.map(d => d.pct_first_response), borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,0.08)', fill: true, tension: 0.35, pointRadius: 3, pointBackgroundColor: '#2563eb' },
+                    { label: 'Resolucao \u2264 72h (%)', data: qData.map(d => d.pct_resolution), borderColor: '#d29922', backgroundColor: 'rgba(210,153,34,0.08)', fill: true, tension: 0.35, pointRadius: 3, pointBackgroundColor: '#d29922' },
+                    { label: 'Meta (90%)', data: qData.map(() => 90), borderColor: '#2ea043', borderDash: [5,5], pointRadius: 0 },
+                ] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: DARK.tick, font: { family: "'Inter'", size: 11 } } }, tooltip: darkTooltip, datalabels: { display: false } },
+                    scales: { ...darkScales, y: { ...darkScales.y, min: 0, max: 100, ticks: { ...darkScales.y.ticks, callback: v => v + '%' } } },
+                },
+            });
+        }
     });
-}
 
-const chartOpts = {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { labels: { color: tickColor, font: { family: 'Inter', size: 11 } } } },
-    scales: { x: { ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } }
-};
-
-queueNames.forEach(qName => {
-    const qData = getQueueHistory(qName);
-    const ticketsEl = document.getElementById('ticketsChart_' + qName);
-    const slaEl = document.getElementById('slaChart_' + qName);
-    if (ticketsEl) {
-        new Chart(ticketsEl, { type: 'bar', data: { labels: labels, datasets: [
-            { label: 'Abertos', data: qData.map(d => d.opened), backgroundColor: '#4361ee', borderRadius: 3 },
-            { label: 'Fechados', data: qData.map(d => d.closed), backgroundColor: '#0f9d58', borderRadius: 3 },
-            { label: 'Backlog', data: qData.map(d => d.backlog), backgroundColor: '#e65100', type: 'line', borderColor: '#e65100', fill: false, tension: 0.35, pointRadius: 3 },
-        ] }, options: chartOpts });
+    // Cost chart
+    const providers = [...new Set(historyData.flatMap(h => Object.keys(h.cloud_costs || {})))];
+    const costColors = { 'AWS': '#d29922', 'OCI': '#f85149', 'Golden Cloud': '#2563eb' };
+    const costEl = document.getElementById('costChart');
+    if (costEl) {
+        new Chart(costEl, {
+            type: 'line',
+            data: { labels: labels, datasets: providers.map(p => ({
+                label: p,
+                data: historyData.map(h => (h.cloud_costs || {})[p] || 0),
+                borderColor: costColors[p] || DARK.palette[0],
+                backgroundColor: (costColors[p] || DARK.palette[0]).replace(')', ',0.08)').replace('rgb', 'rgba'),
+                tension: 0.35,
+                fill: true,
+                pointRadius: 3,
+                pointBackgroundColor: costColors[p] || DARK.palette[0],
+            })) },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: DARK.tick, font: { family: "'Inter'", size: 11 } } }, tooltip: darkTooltip, datalabels: { display: false } },
+                scales: darkScales,
+            },
+        });
     }
-    if (slaEl) {
-        new Chart(slaEl, { type: 'line', data: { labels: labels, datasets: [
-            { label: '1ª Resposta ≤ 24h (%)', data: qData.map(d => d.pct_first_response), borderColor: '#4361ee', backgroundColor: 'rgba(67,97,238,0.08)', fill: true, tension: 0.35, pointRadius: 3 },
-            { label: 'Resolução ≤ 72h (%)', data: qData.map(d => d.pct_resolution), borderColor: '#e65100', backgroundColor: 'rgba(230,81,0,0.08)', fill: true, tension: 0.35, pointRadius: 3 },
-            { label: 'Meta (90%)', data: qData.map(() => 90), borderColor: '#0f9d58', borderDash: [5,5], pointRadius: 0 },
-        ] }, options: { ...chartOpts, scales: { ...chartOpts.scales, y: { ...chartOpts.scales.y, min: 0, max: 100, ticks: { ...chartOpts.scales.y.ticks, callback: v => v + '%' } } } } });
-    }
-});
-
-const providers = [...new Set(historyData.flatMap(h => Object.keys(h.cloud_costs || {})))];
-const chartColors = { 'AWS': '#e65100', 'OCI': '#d32f2f', 'Golden Cloud': '#f9a825' };
-const costEl = document.getElementById('costChart');
-if (costEl) {
-    new Chart(costEl, { type: 'line', data: { labels: labels, datasets: providers.map(p => ({ label: p, data: historyData.map(h => (h.cloud_costs || {})[p] || 0), borderColor: chartColors[p] || '#4361ee', tension: 0.35, fill: false, pointRadius: 3 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tickColor, font: { family: 'Inter', size: 11 } } } }, scales: { x: { ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } } } });
-}
+})();
 {% endif %}
 </script>
 
