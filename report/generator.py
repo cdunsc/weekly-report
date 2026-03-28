@@ -114,7 +114,15 @@ class ReportGenerator:
             except Exception:
                 continue
 
-        logger.warning("Erro ao obter cotação do dólar, usando fallback 5.25")
+        # Fallback: última cotação do histórico
+        history = self._load_history()
+        for entry in reversed(history):
+            rate = entry.get("dollar_rate")
+            if rate and isinstance(rate, (int, float)) and rate > 0:
+                logger.warning(f"Usando cotação do histórico: {rate}")
+                return rate
+
+        logger.error("Sem cotação disponível, usando fallback 5.25")
         return 5.25
 
     def _save_history(self, report_data: dict):
@@ -149,6 +157,7 @@ class ReportGenerator:
             "backlog": report_data["otrs"].get("backlog", 0),
             "avg_first_response": report_data["otrs"].get("avg_first_response_hours"),
             "avg_resolution": report_data["otrs"].get("avg_resolution_hours"),
+            "dollar_rate": report_data.get("dollar_rate"),
             "cloud_costs": {
                 c["provider"]: c["total_cost"] for c in report_data["clouds"]
             },
