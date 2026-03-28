@@ -120,3 +120,42 @@ class AWSCollector:
             "accounts": accounts,
             "top_services": services[:10],
         }
+
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=30),
+           before_sleep=before_sleep_log(logger, logging.WARNING))
+    def collect_monthly(self, months: int = 3) -> list[dict]:
+        """
+        Coleta custo total dos últimos N meses completos.
+
+        Returns:
+            Lista de dicts com {month: "2026-01", cost: float, currency: str}
+        """
+        from dateutil.relativedelta import relativedelta
+
+        today = datetime.now()
+        # Primeiro dia do mês atual (exclusive end)
+        current_month_start = today.replace(day=1)
+        # Primeiro dia de N meses atrás
+        start = current_month_start - relativedelta(months=months)
+
+        resp = self.client.get_cost_and_usage(
+            TimePeriod={
+                "Start": start.strftime("%Y-%m-%d"),
+                "End": current_month_start.strftime("%Y-%m-%d"),
+            },
+            Granularity="MONTHLY",
+            Metrics=["UnblendedCost"],
+        )
+
+        results = []
+        for period in resp.get("ResultsByTime", []):
+            month_start = period["TimePeriod"]["Start"]  # "2026-01-01"
+            amount = float(period["Total"]["UnblendedCost"]["Amount"])
+            currency = period["Total"]["UnblendedCost"]["Unit"]
+            results.append({
+                "month": month_start[:7],  # "2026-01"
+                "cost": round(amount, 2),
+                "currency": currency,
+            })
+
+        return results

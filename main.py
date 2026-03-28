@@ -231,6 +231,33 @@ def main():
             logger.exception("Detalhes:")
             failures.append(f"Golden Cloud: {e}")
 
+    # Histórico mensal (últimos 3 meses completos)
+    monthly_costs = {}
+
+    # AWS mensal
+    if not args.skip_aws and config.get("aws", {}).get("enabled"):
+        try:
+            monthly_costs["AWS"] = aws.collect_monthly(3)
+            logger.info("AWS histórico mensal: %s", monthly_costs["AWS"])
+        except Exception as e:
+            logger.error("Erro ao coletar histórico AWS: %s", e)
+
+    # OCI mensal
+    if not args.skip_oci and config.get("oci", {}).get("enabled"):
+        try:
+            monthly_costs["OCI"] = oci_coll.collect_monthly(3)
+            logger.info("OCI histórico mensal: %s", monthly_costs["OCI"])
+        except Exception as e:
+            logger.error("Erro ao coletar histórico OCI: %s", e)
+
+    # Golden Cloud mensal (já vem do cache/scraping - usa details do collect)
+    for c in cloud_costs:
+        if c.get("provider") == "Golden Cloud" and c.get("details"):
+            monthly_costs["Golden Cloud"] = [
+                {"month": d.get("month", ""), "cost": d.get("cost", 0), "currency": "BRL"}
+                for d in c["details"][-3:]  # últimos 3
+            ]
+
     # Monday.com
     monday_boards = []
     if config.get("monday", {}).get("enabled"):
@@ -252,7 +279,7 @@ def main():
         logger.info("Gerando dashboard e e-mail...")
         generator = ReportGenerator(config)
         # TODO: aba "Diário (D-1)" desabilitada temporariamente
-        result = generator.generate(otrs_data, cloud_costs, monday_boards=monday_boards, otrs_queues=otrs_queues, otrs_daily_queues=[], save_history=not args.refresh)
+        result = generator.generate(otrs_data, cloud_costs, monday_boards=monday_boards, otrs_queues=otrs_queues, otrs_daily_queues=[], save_history=not args.refresh, monthly_costs=monthly_costs)
         logger.info("Dashboard: %s", result['dashboard_path'])
     except Exception as e:
         logger.error("REPORT ERRO: %s", e)

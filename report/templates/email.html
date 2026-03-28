@@ -135,6 +135,46 @@
         {% endif %}
         {% endfor %}
 
+        <!-- Histórico Mensal -->
+        {% if monthly_costs %}
+        <h3 style="font-size: 14px; color: #475569; margin: 0 0 8px;">📅 Custos — Últimos 3 Meses</h3>
+        <table style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+            <thead>
+                <tr style="background: #f8fafc;">
+                    <th style="padding: 8px 12px; border: 1px solid #e2e8f0; text-align: left; color: #64748b; font-size: 11px; text-transform: uppercase;">Provider</th>
+                    {% set all_months = [] %}
+                    {% for provider, months in monthly_costs.items() %}
+                        {% for m in months %}
+                            {% if m.month not in all_months %}
+                                {% if all_months.append(m.month) %}{% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    {% for month in all_months|sort %}
+                    <th style="padding: 8px 12px; border: 1px solid #e2e8f0; text-align: right; color: #64748b; font-size: 11px; text-transform: uppercase;">{{ month }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for provider, months in monthly_costs.items() %}
+                {% set month_map = {} %}
+                {% for m in months %}
+                    {% if month_map.update({m.month: m}) %}{% endif %}
+                {% endfor %}
+                <tr>
+                    <td style="padding: 8px 12px; border: 1px solid #e2e8f0; font-size: 13px; font-weight: 600;">{{ provider }}</td>
+                    {% for month in all_months|sort %}
+                    {% set m = month_map.get(month, {}) %}
+                    <td style="padding: 8px 12px; border: 1px solid #e2e8f0; text-align: right; font-size: 13px; font-variant-numeric: tabular-nums;">
+                        {% if m %}{{ m.currency }} {{ "{:,.2f}".format(m.cost) }}{% else %}—{% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
         <!-- Projetos Monday.com -->
         {% if monday_boards and monday_boards|length > 0 %}
         <h2 style="font-size: 16px; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">📋 Projetos</h2>

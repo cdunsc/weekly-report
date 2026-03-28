@@ -86,3 +86,46 @@ class OCICollector:
             "total_cost": round(total_cost, 2),
             "top_services": services[:10],
         }
+
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=30),
+           before_sleep=before_sleep_log(logger, logging.WARNING))
+    def collect_monthly(self, months: int = 3) -> list[dict]:
+        """
+        Coleta custo total dos últimos N meses completos.
+
+        Returns:
+            Lista de dicts com {month: "2026-01", cost: float, currency: str}
+        """
+        from dateutil.relativedelta import relativedelta
+
+        today = datetime.utcnow()
+        current_month_start = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+        results = []
+        for i in range(months, 0, -1):
+            m_start = current_month_start - relativedelta(months=i)
+            m_end = current_month_start - relativedelta(months=i-1)
+
+            request = oci.usage_api.models.RequestSummarizedUsagesDetails(
+                tenant_id=self.tenant_id,
+                time_usage_started=m_start,
+                time_usage_ended=m_end,
+                granularity="MONTHLY",
+                query_type="COST",
+            )
+
+            resp = self.usage_client.request_summarized_usages(request)
+            total = 0.0
+            currency = "USD"
+            for item in resp.data.items:
+                if item.computed_amount is not None:
+                    total += item.computed_amount
+                    currency = item.currency or currency
+
+            results.append({
+                "month": m_start.strftime("%Y-%m"),
+                "cost": round(total, 2),
+                "currency": currency,
+            })
+
+        return results

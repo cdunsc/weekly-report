@@ -23,7 +23,7 @@ class ReportGenerator:
         self.base_url = config["dashboard"].get("base_url", "")
         self.env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 
-    def generate(self, otrs_data: dict, cloud_costs: list, monday_boards: list = None, otrs_queues: list = None, otrs_daily_queues: list = None, save_history: bool = True) -> dict:
+    def generate(self, otrs_data: dict, cloud_costs: list, monday_boards: list = None, otrs_queues: list = None, otrs_daily_queues: list = None, save_history: bool = True, monthly_costs: dict = None) -> dict:
         """
         Gera o relatório completo.
 
@@ -72,6 +72,7 @@ class ReportGenerator:
             "monday_boards": monday_boards or [],
             "otrs_queues": otrs_queues or [],
             "otrs_daily_queues": otrs_daily_queues or [],
+            "monthly_costs": monthly_costs or {},
         }
 
         # Salva dados brutos para histórico (apenas no relatório semanal)

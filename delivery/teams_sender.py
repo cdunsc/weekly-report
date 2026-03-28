@@ -167,6 +167,48 @@ class TeamsSender:
                     })
                 break
 
+        # Histórico mensal (últimos 3 meses)
+        monthly_costs = report_data.get("monthly_costs", {})
+        monthly_body = []
+        if monthly_costs:
+            # Collect all unique months sorted
+            all_months = sorted({m["month"] for months in monthly_costs.values() for m in months})
+
+            monthly_body.append({
+                "type": "TextBlock",
+                "text": "📅 CUSTOS — Últimos 3 Meses",
+                "weight": "Bolder",
+                "color": "Accent",
+                "spacing": "Medium",
+                "wrap": True,
+            })
+
+            # Header row
+            header_cells = [{"type": "TableCell", "items": [{"type": "TextBlock", "text": "Provider", "weight": "Bolder", "wrap": True}]}]
+            for month in all_months:
+                header_cells.append({"type": "TableCell", "items": [{"type": "TextBlock", "text": month, "weight": "Bolder", "wrap": True}]})
+
+            monthly_rows = [{"type": "TableRow", "style": "accent", "cells": header_cells}]
+
+            for provider, months in monthly_costs.items():
+                month_map = {m["month"]: m for m in months}
+                cells = [{"type": "TableCell", "items": [{"type": "TextBlock", "text": provider, "weight": "Bolder", "wrap": True}]}]
+                for month in all_months:
+                    m = month_map.get(month)
+                    text = f"{m['currency']} {m['cost']:,.2f}" if m else "—"
+                    cells.append({"type": "TableCell", "items": [{"type": "TextBlock", "text": text, "wrap": True}]})
+                monthly_rows.append({"type": "TableRow", "cells": cells})
+
+            cols = [{"width": 2}] + [{"width": 1}] * len(all_months)
+            monthly_body.append({
+                "type": "Table",
+                "gridStyle": "accent",
+                "firstRowAsHeader": True,
+                "showGridLines": True,
+                "columns": cols,
+                "rows": monthly_rows,
+            })
+
         # Seção Monday.com (projetos)
         monday_boards = report_data.get("monday_boards", [])
         monday_body = []
@@ -262,6 +304,7 @@ class TeamsSender:
                     "rows": cloud_rows,
                 },
                 *aws_accounts_body,
+                *monthly_body,
                 *monday_body,
             ],
             "actions": [
