@@ -162,6 +162,7 @@
             padding: 18px 16px;
             text-align: center;
             transition: background 0.2s;
+            position: relative;
         }
         .kpi-card:hover { background: var(--bg-card-hover); }
         .kpi-card .label { color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
@@ -361,3 +362,66 @@
             .header { padding: 16px; }
             .kpi-grid { grid-template-columns: 1fr 1fr; }
         }
+
+/* === Delta Badges === */
+.kpi-delta {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+.kpi-delta.up-bad { color: #ef4444; }
+.kpi-delta.up-good { color: #22c55e; }
+.kpi-delta.down-bad { color: #ef4444; }
+.kpi-delta.down-good { color: #22c55e; }
+.kpi-delta.neutral { color: #94a3b8; }
+
+/* === Anomaly Banner === */
+.anomaly-banner {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #fbbf24;
+    line-height: 1.6;
+}
+
+/* === Progress Bar (Monday.com) === */
+.progress-stacked {
+    display: flex;
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.08);
+    width: 100%;
+    margin: 6px 0;
+}
+.progress-stacked .seg-done { background: #22c55e; }
+.progress-stacked .seg-progress { background: #3b82f6; }
+.progress-stacked .seg-stuck { background: #ef4444; }
+.progress-stacked .seg-notstarted { background: #4b5563; }
+
+.progress-legend {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+.progress-legend span::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+.progress-legend .leg-done::before { background: #22c55e; }
+.progress-legend .leg-progress::before { background: #3b82f6; }
+.progress-legend .leg-stuck::before { background: #ef4444; }
+.progress-legend .leg-notstarted::before { background: #4b5563; }
