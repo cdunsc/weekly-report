@@ -38,6 +38,7 @@ from auth import (
     create_reset_token,
     verify_reset_token,
     consume_reset_token,
+    validate_password,
 )
 
 CONFIG_FILE = "/opt/weekly-report/config.yaml"
@@ -68,7 +69,17 @@ app.secret_key = (
 )
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["PERMANENT_SESSION_LIFETIME"] = 86400  # 24h
+app.config["PERMANENT_SESSION_LIFETIME"] = 14400  # 4h
+
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=[],
+    storage_uri="memory://",
+)
 
 DASHBOARD_DIR = "/var/www/html/dashboard"
 DATA_FILE = "/opt/weekly-report/data/golden_cloud.json"
@@ -136,6 +147,7 @@ def _send_reset_email(to_email: str, username: str, reset_url: str):
 # --- Routes ---
 
 @app.route("/dashboard/login", methods=["GET", "POST"])
+@limiter.limit("10 per minute", methods=["POST"])
 def login():
     if session.get("user"):
         user_data = get_user(session["user"])
@@ -189,11 +201,13 @@ def change_password_page():
             error = "Senha atual incorreta."
         elif new_password != confirm_password:
             error = "As senhas nao conferem."
-        elif len(new_password) < 6:
-            error = "A nova senha deve ter pelo menos 6 caracteres."
         else:
-            change_password(username, new_password)
-            return redirect(url_for("dashboard"))
+            pwd_error = validate_password(new_password)
+            if pwd_error:
+                error = pwd_error
+            else:
+                change_password(username, new_password)
+                return redirect(url_for("dashboard"))
 
     return render_template(
         "change_password.html",
@@ -204,6 +218,7 @@ def change_password_page():
 
 
 @app.route("/dashboard/forgot-password", methods=["GET", "POST"])
+@limiter.limit("5 per minute", methods=["POST"])
 def forgot_password():
     error = None
     success = None
@@ -251,12 +266,14 @@ def reset_password(token):
 
         if new_password != confirm_password:
             error = "As senhas nao conferem."
-        elif len(new_password) < 6:
-            error = "A nova senha deve ter pelo menos 6 caracteres."
         else:
-            change_password(username, new_password)
-            consume_reset_token(token)
-            return redirect(url_for("login", success="Senha redefinida com sucesso."))
+            pwd_error = validate_password(new_password)
+            if pwd_error:
+                error = pwd_error
+            else:
+                change_password(username, new_password)
+                consume_reset_token(token)
+                return redirect(url_for("login", success="Senha redefinida com sucesso."))
 
     return render_template(
         "reset_password.html",

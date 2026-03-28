@@ -7,11 +7,8 @@ import json
 import logging
 import os
 import re
-import warnings
 import requests
 from datetime import datetime
-
-warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 
 logger = logging.getLogger(__name__)
 
@@ -25,12 +22,13 @@ class GoldenCloudCollector:
         self.portal_url = config.get("portal_url", "")
         self.username = config.get("username", "")
         self.password = config.get("password", "")
+        self.verify_ssl = config.get("verify_ssl", True)
         self.data_file = DATA_FILE
 
     def _scrape(self) -> dict:
         """Login no portal e coleta custos via API interna."""
         session = requests.Session()
-        session.verify = False
+        session.verify = self.verify_ssl
 
         # GET login page para obter cookies e token antiforgery
         login_page = session.get(self.portal_url, timeout=30)

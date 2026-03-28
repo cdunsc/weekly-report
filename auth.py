@@ -6,6 +6,7 @@ Armazena credenciais em JSON com senhas hash (bcrypt).
 import json
 import logging
 import os
+import re
 import secrets
 from datetime import datetime, timedelta
 
@@ -146,6 +147,21 @@ def consume_reset_token(token: str):
     tokens = _load_tokens()
     tokens.pop(token, None)
     _save_tokens(tokens)
+
+
+def validate_password(password: str) -> str | None:
+    """Valida complexidade da senha. Retorna mensagem de erro ou None se válida."""
+    if len(password) < 8:
+        return "A senha deve ter pelo menos 8 caracteres."
+    if not re.search(r"[A-Z]", password):
+        return "A senha deve conter pelo menos uma letra maiúscula."
+    if not re.search(r"[a-z]", password):
+        return "A senha deve conter pelo menos uma letra minúscula."
+    if not re.search(r"[0-9]", password):
+        return "A senha deve conter pelo menos um número."
+    if not re.search(r"[^A-Za-z0-9]", password):
+        return "A senha deve conter pelo menos um caractere especial."
+    return None
 
 
 def list_users() -> list[dict]:
