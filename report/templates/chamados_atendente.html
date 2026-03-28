@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chamados — {{ owner_name }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0d1117; --bg-main: #161b22; --bg-card: #1c2128;
+            --bg-card-hover: #21262d; --border: #30363d; --text: #e6edf3;
+            --text-muted: #7d8590; --accent: #2563eb; --accent-hover: #3b82f6;
+            --accent-soft: rgba(37,99,235,0.1); --green: #2ea043; --red: #f85149;
+            --yellow: #d29922; --sidebar-w: 220px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-body);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* App Layout */
+        .app-layout {
+            display: grid;
+            grid-template-columns: var(--sidebar-w) 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--bg-main);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+        .sidebar-logo {
+            padding: 20px 18px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+        }
+        .sidebar-nav a:hover {
+            background: var(--bg-card);
+            color: var(--text);
+        }
+        .sidebar-nav a.active {
+            background: var(--accent-soft);
+            color: var(--accent-hover);
+            font-weight: 600;
+        }
+        .sidebar-footer {
+            padding: 14px 18px;
+            border-top: 1px solid var(--border);
+        }
+        .sidebar-footer .btn-logout {
+            display: block;
+            padding: 7px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .sidebar-footer .btn-logout:hover { background: var(--bg-card-hover); color: var(--text); }
+
+        /* Main Area */
+        .main-area {
+            grid-column: 2;
+            min-width: 0;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .header h1 { font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+        .header .subtitle { color: var(--text-muted); margin-top: 2px; font-size: 0.82rem; font-weight: 400; }
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .hamburger:hover { background: var(--bg-card); }
+
+        .container { max-width: 1320px; margin: 0 auto; padding: 24px 32px; }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        .breadcrumb a { color: var(--accent); text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb .sep { color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text); font-weight: 500; }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 18px 16px;
+            text-align: center;
+            transition: background 0.2s;
+        }
+        .kpi-card:hover { background: var(--bg-card-hover); }
+        .kpi-card .label { color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+        .kpi-card .value { font-size: 2rem; font-weight: 700; margin: 6px 0 2px; letter-spacing: -0.5px; }
+        .kpi-card .value.green { color: var(--green); }
+        .kpi-card .value.red { color: var(--red); }
+        .kpi-card .value.yellow { color: var(--yellow); }
+        .kpi-card .value.blue { color: var(--accent); }
+
+        /* Sections */
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 22px 24px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        th {
+            color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase;
+            letter-spacing: 0.5px; font-weight: 600; background: var(--bg-main);
+            position: sticky; top: 0; z-index: 2;
+        }
+        td { font-size: 0.85rem; }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(odd) td { background: var(--bg-main); }
+        tr:nth-child(even) td { background: var(--bg-card); }
+        tr:hover td { background: var(--bg-card-hover); }
+
+        /* Badge (dot + text) */
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.75rem; font-weight: 600; letter-spacing: 0.3px;
+        }
+        .badge::before {
+            content: '';
+            display: inline-block;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+        }
+        .badge.aberto { color: var(--accent); }
+        .badge.aberto::before { background: var(--accent); }
+        .badge.fechado { color: var(--green); }
+        .badge.fechado::before { background: var(--green); }
+        .badge.pendente { color: var(--yellow); }
+        .badge.pendente::before { background: var(--yellow); }
+
+        /* Search box */
+        .search-box {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-main);
+            color: var(--text);
+            font-size: 0.85rem;
+            font-family: inherit;
+            width: 300px;
+            margin-bottom: 14px;
+        }
+        .search-box::placeholder { color: var(--text-muted); }
+        .search-box:focus { outline: none; border-color: var(--accent); }
+
+        .ticket-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .ticket-link:hover { text-decoration: underline; }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .app-layout { grid-template-columns: 1fr; }
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .main-area { grid-column: 1; }
+            .hamburger { display: block; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            .header { padding: 16px; }
+            .search-box { width: 100%; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-layout">
+
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">Surf Telecom</div>
+    <div class="sidebar-nav">
+        <a href="/dashboard">&#9729; Dashboard</a>
+    </div>
+    <div class="sidebar-footer">
+        <a href="/logout" class="btn-logout">Sair</a>
+    </div>
+</nav>
+
+<div class="main-area">
+    <div class="header">
+        <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+        <div>
+            <h1>Atendente — {{ owner_name }}</h1>
+            <div class="subtitle">Fila: {{ queue_name }} | Relatorio Semanal</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/dashboard">Dashboard</a><span class="sep">/</span>Fila {{ queue_name }}<span class="sep">/</span><span class="current">Atendente: {{ owner_name }}</span>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="label">Total de Chamados</div>
+                <div class="value blue">{{ total }}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">Em Aberto</div>
+                <div class="value {% if abertos|length > 10 %}red{% elif abertos|length > 5 %}yellow{% else %}green{% endif %}">{{ abertos|length }}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">Fechados</div>
+                <div class="value green">{{ fechados|length }}</div>
+            </div>
+        </div>
+
+        <!-- Chamados Fechados -->
+        {% if fechados %}
+        <div class="section">
+            <h2>Chamados Fechados ({{ fechados|length }})</h2>
+            <input type="text" class="search-box" placeholder="Filtrar chamados..." onkeyup="filterTable(this, 'table-fechados')">
+            <table id="table-fechados">
+                <thead>
+                    <tr>
+                        <th>Chamado</th>
+                        <th>Assunto</th>
+                        <th>Solicitante</th>
+                        <th>Servico</th>
+                        <th>Estado</th>
+                        <th>Criado em</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for t in fechados %}
+                <tr>
+                    <td><a class="ticket-link" href="{{ otrs_panel_url }}/otrs/index.pl?Action=AgentTicketZoom;TicketNumber={{ t.id }}" target="_blank">{{ t.id }}</a></td>
+                    <td>{{ t.title }}</td>
+                    <td>{{ t.customer or 'Abertura Automática' }}</td>
+                    <td>{{ t.service or 'Sem Servico' }}</td>
+                    <td><span class="badge fechado">{{ t.state }}</span></td>
+                    <td style="white-space: nowrap;">{{ t.created[:16] if t.created else '—' }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Chamados em Aberto -->
+        {% if abertos %}
+        <div class="section">
+            <h2>Chamados em Aberto ({{ abertos|length }})</h2>
+            <input type="text" class="search-box" placeholder="Filtrar chamados..." onkeyup="filterTable(this, 'table-abertos')">
+            <table id="table-abertos">
+                <thead>
+                    <tr>
+                        <th>Chamado</th>
+                        <th>Assunto</th>
+                        <th>Solicitante</th>
+                        <th>Servico</th>
+                        <th>Estado</th>
+                        <th>Criado em</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for t in abertos %}
+                <tr>
+                    <td><a class="ticket-link" href="{{ otrs_panel_url }}/otrs/index.pl?Action=AgentTicketZoom;TicketNumber={{ t.id }}" target="_blank">{{ t.id }}</a></td>
+                    <td>{{ t.title }}</td>
+                    <td>{{ t.customer or 'Abertura Automática' }}</td>
+                    <td>{{ t.service or 'Sem Servico' }}</td>
+                    <td><span class="badge pendente">{{ t.state }}</span></td>
+                    <td style="white-space: nowrap;">{{ t.created[:16] if t.created else '—' }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if not abertos and not fechados %}
+        <div class="section">
+            <h2>Nenhum Chamado Encontrado</h2>
+            <p style="color: var(--text-muted); padding: 20px 0;">Nao ha chamados do atendente "{{ owner_name }}" no periodo atual.</p>
+        </div>
+        {% endif %}
+
+    </div><!-- /container -->
+</div><!-- /main-area -->
+</div><!-- /app-layout -->
+
+<script>
+function filterTable(input, tableId) {
+    const filter = input.value.toLowerCase();
+    const rows = document.getElementById(tableId).querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
+}
+</script>
+
+</body>
+</html>
