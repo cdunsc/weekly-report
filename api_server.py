@@ -84,6 +84,7 @@ limiter = Limiter(
 DASHBOARD_DIR = "/var/www/html/dashboard"
 DATA_FILE = "/opt/weekly-report/data/golden_cloud.json"
 OTRS_CACHE_FILE = "/opt/weekly-report/data/otrs_cache.json"
+STATIC_DIR = "/opt/weekly-report/static"
 
 
 # --- Auth helpers ---
@@ -145,6 +146,11 @@ def _send_reset_email(to_email: str, username: str, reset_url: str):
 
 
 # --- Routes ---
+
+@app.route("/dashboard/static/<path:filename>")
+def serve_static(filename):
+    return send_from_directory(STATIC_DIR, filename)
+
 
 @app.route("/dashboard/login", methods=["GET", "POST"])
 @limiter.limit("10 per minute", methods=["POST"])
