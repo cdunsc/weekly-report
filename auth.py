@@ -4,11 +4,14 @@ Armazena credenciais em JSON com senhas hash (bcrypt).
 """
 
 import json
+import logging
 import os
 import secrets
 from datetime import datetime, timedelta
 
 import bcrypt
+
+logger = logging.getLogger(__name__)
 
 USERS_FILE = "/opt/weekly-report/data/users.json"
 RESET_TOKENS_FILE = "/opt/weekly-report/data/reset_tokens.json"

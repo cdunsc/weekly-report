@@ -8,10 +8,13 @@ Métricas: abertos, fechados, backlog, SLA (1a resposta e resolução),
 
 import csv
 import io
+import logging
 import re
 import requests
 from collections import Counter
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 
 # Estados considerados "fechados"
@@ -94,9 +97,9 @@ class OTRSCollector:
                 break
 
         if customer_col:
-            print(f"[OTRS] Coluna de cliente detectada: '{customer_col}'")
+            logger.info("Coluna de cliente detectada: '%s'", customer_col)
         else:
-            print(f"[OTRS] Colunas disponíveis: {list(col_map.keys())}")
+            logger.info("Colunas disponíveis: %s", list(col_map.keys()))
 
         tickets = []
         for row in reader:
@@ -266,9 +269,9 @@ class OTRSCollector:
             sla_fr = q.get("sla_first_response_hours", 24)
             sla_res = q.get("sla_resolution_hours", 72)
 
-            print(f"[OTRS] Exportando fila {queue_name} (ID={queue_id})...")
+            logger.info("Exportando fila %s (ID=%s)...", queue_name, queue_id)
             all_tickets = self._search_csv(session, token, queue_id)
-            print(f"[OTRS] {queue_name}: {len(all_tickets)} tickets no total")
+            logger.info("%s: %d tickets no total", queue_name, len(all_tickets))
 
             # Métricas semanais
             metrics = self._calc_metrics(all_tickets, start_date, end_date,
@@ -277,8 +280,8 @@ class OTRSCollector:
             metrics["queue_name"] = queue_name
             weekly_results.append(metrics)
 
-            print(f"[OTRS] {queue_name}: Abertos={metrics['opened']}, "
-                  f"Fechados={metrics['closed']}, Backlog={metrics['backlog']}")
+            logger.info("%s: Abertos=%d, Fechados=%d, Backlog=%d",
+                        queue_name, metrics['opened'], metrics['closed'], metrics['backlog'])
 
             # Métricas D-1 (até 23:59 do dia anterior)
             if daily_end_date:
@@ -287,8 +290,8 @@ class OTRSCollector:
                                                    sla_resolution_hours=sla_res)
                 daily_metrics["queue_name"] = queue_name
                 daily_results.append(daily_metrics)
-                print(f"[OTRS] {queue_name} (D-1 até {daily_end_date}): "
-                      f"Abertos={daily_metrics['opened']}, "
-                      f"Fechados={daily_metrics['closed']}, Backlog={daily_metrics['backlog']}")
+                logger.info("%s (D-1 até %s): Abertos=%d, Fechados=%d, Backlog=%d",
+                            queue_name, daily_end_date,
+                            daily_metrics['opened'], daily_metrics['closed'], daily_metrics['backlog'])
 
         return weekly_results, daily_results

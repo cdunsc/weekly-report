@@ -8,10 +8,13 @@ Roda em 127.0.0.1:8080, proxy via nginx.
 """
 
 import json
+import logging
 import os
 import secrets
 from datetime import datetime
 from functools import wraps
+
+logger = logging.getLogger(__name__)
 
 from flask import (
     Flask,
@@ -123,10 +126,10 @@ def _send_reset_email(to_email: str, username: str, reset_url: str):
             subject="Surf Telecom - Redefinir Senha",
             html_body=html_body,
         )
-        print(f"[AUTH] E-mail de reset enviado para {to_email}")
+        logger.info("E-mail de reset enviado para %s", to_email)
         return True
     except Exception as e:
-        print(f"[AUTH] Erro ao enviar e-mail de reset: {e}")
+        logger.error("Erro ao enviar e-mail de reset: %s", e)
         return False
 
 

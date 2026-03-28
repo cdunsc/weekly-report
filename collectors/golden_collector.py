@@ -4,6 +4,7 @@ Login no portal e consulta da API /Analysis/Summary.
 """
 
 import json
+import logging
 import os
 import re
 import warnings
@@ -11,6 +12,8 @@ import requests
 from datetime import datetime
 
 warnings.filterwarnings("ignore", message="Unverified HTTPS request")
+
+logger = logging.getLogger(__name__)
 
 
 DATA_FILE = "/opt/weekly-report/data/golden_cloud.json"
@@ -134,7 +137,7 @@ class GoldenCloudCollector:
                     "status": "OK",
                 }
             except Exception as e:
-                print(f"[GOLDEN] Scraping falhou ({e}), usando cache local")
+                logger.warning("Scraping falhou (%s), usando cache local", e)
                 # Fallback para cache
 
         # Fallback: input manual

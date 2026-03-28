@@ -2,7 +2,11 @@
 Envio de relatório para Microsoft Teams via Power Automate Webhook (Adaptive Card).
 """
 
+import logging
+
 import requests
+
+logger = logging.getLogger(__name__)
 
 
 class TeamsSender:
@@ -192,6 +196,6 @@ class TeamsSender:
         )
 
         if resp.status_code in (200, 202):
-            print("[TEAMS] Relatório enviado com sucesso")
+            logger.info("Relatório enviado com sucesso")
         else:
-            print(f"[TEAMS] Erro ao enviar: {resp.status_code} - {resp.text}")
+            logger.error("Erro ao enviar: %s - %s", resp.status_code, resp.text)

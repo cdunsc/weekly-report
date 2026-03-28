@@ -3,11 +3,14 @@ Gerador de relatório: consolida dados e renderiza templates.
 """
 
 import json
+import logging
 import os
 import requests
 from datetime import datetime, timedelta
 
 from jinja2 import Environment, FileSystemLoader
+
+logger = logging.getLogger(__name__)
 
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
@@ -111,7 +114,7 @@ class ReportGenerator:
             except Exception:
                 continue
 
-        print("[COTAÇÃO] Erro ao obter cotação do dólar, usando fallback 5.25")
+        logger.warning("Erro ao obter cotação do dólar, usando fallback 5.25")
         return 5.25
 
     def _save_history(self, report_data: dict):

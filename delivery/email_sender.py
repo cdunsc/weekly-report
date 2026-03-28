@@ -3,8 +3,11 @@ Envio de relatório por e-mail via Microsoft Graph API (OAuth2).
 """
 
 import json
+import logging
 import msal
 import urllib.request
+
+logger = logging.getLogger(__name__)
 
 
 class EmailSender:
@@ -65,7 +68,7 @@ class EmailSender:
 
         try:
             urllib.request.urlopen(req)
-            print(f"[EMAIL] Relatório enviado para {', '.join(self.to_addrs)}")
+            logger.info("Relatório enviado para %s", ', '.join(self.to_addrs))
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8", errors="replace")
             raise RuntimeError(f"Graph API erro {e.code}: {body}")
