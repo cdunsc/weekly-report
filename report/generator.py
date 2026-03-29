@@ -103,6 +103,20 @@ class ReportGenerator:
             "report_data": report_data,
         }
 
+    @staticmethod
+    def save_report_json(report_data: dict, output_path: str):
+        """Salva dados do relatório como JSON para o frontend React."""
+        import copy
+        data = copy.deepcopy(report_data)
+        # Remove campos não serializáveis ou desnecessários
+        for key in list(data.keys()):
+            if key == "history":
+                # Mantém só últimas 12 semanas para o frontend
+                data[key] = data[key][-12:]
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+
     def _get_dollar_rate(self) -> float:
         """Busca cotação comercial USD/BRL via Frankfurter API (taxas do BCE)."""
         try:

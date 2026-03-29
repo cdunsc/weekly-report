@@ -281,6 +281,10 @@ def main():
         # TODO: aba "Diário (D-1)" desabilitada temporariamente
         result = generator.generate(otrs_data, cloud_costs, monday_boards=monday_boards, otrs_queues=otrs_queues, otrs_daily_queues=[], save_history=not args.refresh, monthly_costs=monthly_costs)
         logger.info("Dashboard: %s", result['dashboard_path'])
+        # Salva JSON para o frontend React
+        report_json_path = "/opt/weekly-report/data/report-data.json"
+        generator.save_report_json(result["report_data"], report_json_path)
+        logger.info("Report JSON: %s", report_json_path)
     except Exception as e:
         logger.error("REPORT ERRO: %s", e)
         logger.exception("Detalhes:")
