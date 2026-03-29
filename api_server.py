@@ -324,9 +324,17 @@ def dashboard():
     if os.path.exists(index_path):
         return send_from_directory(DASHBOARD_DIR, "index.html")
     return (
-        "<h1>Dashboard ainda nao foi gerado.</h1><p>Execute main.py primeiro.</p>",
+        "<h1>Dashboard ainda não foi gerado.</h1><p>Execute o build do frontend.</p>",
         404,
     )
+
+
+@app.route("/dashboard/assets/<path:filename>")
+@login_required
+def dashboard_assets(filename):
+    """Serve assets do React build (JS, CSS, imagens)."""
+    assets_dir = os.path.join(DASHBOARD_DIR, "assets")
+    return send_from_directory(assets_dir, filename)
 
 
 # --- Chamados por Serviço ---
@@ -485,6 +493,20 @@ def golden_cloud_options():
     resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
     resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
     return resp
+
+
+REPORT_DATA_FILE = "/opt/weekly-report/data/report-data.json"
+
+
+@app.route("/dashboard/api/report-data")
+@login_required
+def report_data_api():
+    """Serve dados do relatório para o frontend React."""
+    if not os.path.exists(REPORT_DATA_FILE):
+        return jsonify({"error": "Dados ainda não gerados. Execute main.py primeiro."}), 404
+    with open(REPORT_DATA_FILE) as f:
+        data = json.load(f)
+    return jsonify(data)
 
 
 def main():
