@@ -241,9 +241,9 @@ class OCIFinOpsCollector:
             return "Windows OS Licensing"
 
         # Regra 2: Oracle OCPU - <Family> - ...
-        match = re.search(r"Oracle OCPU\s*-\s*(\S+)", sku_name, re.IGNORECASE)
+        match = re.match(r"Oracle OCPU\s*-\s*(.+?)(?:\s*-\s*(?:OCPU|GPU).*)?$", sku_name, re.IGNORECASE)
         if match:
-            return match.group(1)
+            return match.group(1).strip()
 
         # Regra 3: GPU<digits>
         match = re.search(r"GPU(\d+)", sku_name, re.IGNORECASE)
@@ -292,7 +292,11 @@ class OCIFinOpsCollector:
         # ------------------------------------------------------------------
         # Regra 2: OKE Enhanced clusters detectados
         # ------------------------------------------------------------------
-        oke_services = [s for s in by_service if "OKE" in s["service"].upper() and "ENHANCED" in s["service"].upper()]
+        oke_services = [
+            s for s in by_service
+            if "enhanced" in s["service"].lower()
+            and ("oke" in s["service"].lower() or "kubernetes" in s["service"].lower())
+        ]
         if oke_services:
             oke_cost = sum(s["cost"] for s in oke_services)
             recs.append(
@@ -333,7 +337,7 @@ class OCIFinOpsCollector:
         # Regra 4: Variação de serviço > 30% E custo anterior > 100
         # ------------------------------------------------------------------
         for svc in by_service:
-            if svc["variation_pct"] > 30.0 and svc["prev_cost"] > 100.0:
+            if abs(svc["variation_pct"]) > 30.0 and svc["prev_cost"] > 100.0:
                 diff = round(svc["cost"] - svc["prev_cost"], 2)
                 recs.append(
                     {

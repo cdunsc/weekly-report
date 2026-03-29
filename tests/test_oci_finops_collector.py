@@ -98,9 +98,13 @@ class TestParseShapeFamily:
 
     def test_oracle_ocpu_pattern(self):
         fn = self._fn()
-        assert fn("Oracle OCPU - Standard3 - E4") == "Standard3"
-        assert fn("Oracle OCPU - DenseIO - D2") == "DenseIO"
-        assert fn("Oracle OCPU - Optimized3 - X9") == "Optimized3"
+        assert fn("Oracle OCPU - Standard3 - E4") == "Standard3 - E4"
+        assert fn("Oracle OCPU - DenseIO - D2") == "DenseIO - D2"
+        assert fn("Oracle OCPU - Optimized3 - X9") == "Optimized3 - X9"
+
+    def test_oracle_ocpu_multi_word_family(self):
+        fn = self._fn()
+        assert fn("Oracle OCPU - Standard - X9 - OCPU Per Hour") == "Standard - X9"
 
     def test_gpu_pattern(self):
         fn = self._fn()
@@ -160,7 +164,7 @@ class TestBuildRecommendations:
     def test_rule_oke_enhanced_detected(self):
         fn = self._fn()
         by_service = [
-            {"service": "OKE Enhanced", "cost": 200.0, "currency": "BRL", "prev_cost": 180.0, "variation_pct": 11.0},
+            {"service": "Oracle Container Engine for Kubernetes - Enhanced Clusters", "cost": 200.0, "currency": "BRL", "prev_cost": 180.0, "variation_pct": 11.0},
         ]
         recs = fn([], by_service, [], total_cost=1000.0)
         assert any("OKE" in r["title"] for r in recs)
@@ -218,6 +222,14 @@ class TestBuildRecommendations:
         # prev_cost=50 <= 100 → rule must NOT fire
         assert not any("anomalia" in r["title"].lower() for r in recs)
 
+    def test_rule_variation_negative_spike(self):
+        fn = self._fn()
+        by_service = [
+            {"service": "Database", "cost": 50.0, "currency": "BRL", "prev_cost": 500.0, "variation_pct": -90.0},
+        ]
+        recs = fn([], by_service, [], total_cost=1000.0)
+        assert any("anomalia" in r["title"].lower() or "Database" in r["title"] for r in recs)
+
     def test_rule_variation_under_threshold(self):
         fn = self._fn()
         by_service = [
@@ -257,7 +269,7 @@ class TestBuildRecommendations:
             {"compartment": "prod", "cost": 750.0, "pct": 75.0},
         ]
         by_service = [
-            {"service": "OKE Enhanced", "cost": 200.0, "currency": "BRL", "prev_cost": 180.0, "variation_pct": 11.0},
+            {"service": "Oracle Container Engine for Kubernetes - Enhanced Clusters", "cost": 200.0, "currency": "BRL", "prev_cost": 180.0, "variation_pct": 11.0},
             {"service": "Database", "cost": 400.0, "currency": "BRL", "prev_cost": 150.0, "variation_pct": 166.0},
         ]
         compute_shapes = [
