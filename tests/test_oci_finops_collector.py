@@ -96,15 +96,22 @@ class TestParseShapeFamily:
         assert fn("Windows OCPU - Compute") == "Windows OS Licensing"
         assert fn("Oracle Windows Licensing - VM") == "Windows OS Licensing"
 
-    def test_oracle_ocpu_pattern(self):
-        fn = self._fn()
-        assert fn("Oracle OCPU - Standard3 - E4") == "Standard3 - E4"
-        assert fn("Oracle OCPU - DenseIO - D2") == "DenseIO - D2"
-        assert fn("Oracle OCPU - Optimized3 - X9") == "Optimized3 - X9"
-
-    def test_oracle_ocpu_multi_word_family(self):
+    def test_oracle_ocpu_long_format(self):
         fn = self._fn()
         assert fn("Oracle OCPU - Standard - X9 - OCPU Per Hour") == "Standard - X9"
+        assert fn("Oracle OCPU - DenseIO - D2 - OCPU Per Hour") == "DenseIO - D2"
+
+    def test_direct_shape_names(self):
+        fn = self._fn()
+        assert fn("Standard - X9") == "Standard - X9"
+        assert fn("Standard - E4") == "Standard - E4"
+        assert fn("Optimized - X9") == "Optimized - X9"
+
+    def test_memory_suffix_stripped(self):
+        fn = self._fn()
+        assert fn("Standard - E4 - Memory") == "Standard - E4"
+        assert fn("Standard - X9 - Memory") == "Standard - X9"
+        assert fn("Optimized - X9 - Memory") == "Optimized - X9"
 
     def test_gpu_pattern(self):
         fn = self._fn()

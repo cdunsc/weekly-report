@@ -215,6 +215,22 @@ def main():
     else:
         logger.info("Pulando OCI")
 
+    # OCI FinOps (breakdown detalhado)
+    finops_data = None
+    if not args.skip_oci and config.get("oci", {}).get("enabled"):
+        try:
+            from collectors.oci_finops_collector import OCIFinOpsCollector
+            logger.info("Coletando OCI FinOps...")
+            finops = OCIFinOpsCollector(config["oci"])
+            finops_data = finops.collect()
+            logger.info("OCI FinOps: %d compartments, %d services, %d recommendations",
+                        len(finops_data["by_compartment"]),
+                        len(finops_data["by_service"]),
+                        len(finops_data["recommendations"]))
+        except Exception as e:
+            logger.error("OCI FinOps ERRO: %s", e)
+            logger.exception("Detalhes:")
+
     # Golden Cloud
     if config.get("golden_cloud", {}).get("enabled"):
         try:
@@ -279,7 +295,7 @@ def main():
         logger.info("Gerando dashboard e e-mail...")
         generator = ReportGenerator(config)
         # TODO: aba "Diário (D-1)" desabilitada temporariamente
-        result = generator.generate(otrs_data, cloud_costs, monday_boards=monday_boards, otrs_queues=otrs_queues, otrs_daily_queues=[], save_history=not args.refresh, monthly_costs=monthly_costs)
+        result = generator.generate(otrs_data, cloud_costs, monday_boards=monday_boards, otrs_queues=otrs_queues, otrs_daily_queues=[], save_history=not args.refresh, monthly_costs=monthly_costs, finops_data=finops_data)
         logger.info("Dashboard: %s", result['dashboard_path'])
         # Salva JSON para o frontend React
         report_json_path = "/opt/weekly-report/data/report-data.json"

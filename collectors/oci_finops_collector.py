@@ -96,18 +96,25 @@ class OCIFinOpsCollector:
             )
         by_service.sort(key=lambda x: x["cost"], reverse=True)
 
-        # 3. Shapes de compute — mês atual, filtrado por serviço Compute
+        # 3. Shapes de compute — mês atual, agrupado por skuName
+        # OCI Usage API não retorna 'service' quando groupBy=skuName,
+        # então filtramos client-side pelo padrão do SKU name.
         shape_items = self._query(
             curr_start, curr_end,
             group_by=["skuName"],
-            service_filter="Compute",
         )
+
+        # Compute SKU patterns: "Standard -", "Dense", "Optimized", "GPU", "Windows OS", "Oracle OCPU"
+        _COMPUTE_SKU_PATTERNS = ("standard", "dense", "optimized", "gpu", "windows os", "oracle ocpu")
 
         shape_costs: dict[str, dict] = {}
         for item in shape_items:
             if item.computed_amount is None or item.computed_amount <= _MIN_AMOUNT:
                 continue
-            family = self._parse_shape_family(item.sku_name or "")
+            sku = item.sku_name or ""
+            if not any(p in sku.lower() for p in _COMPUTE_SKU_PATTERNS):
+                continue
+            family = self._parse_shape_family(sku)
             entry = shape_costs.setdefault(family, {"cost": 0.0, "ocpu_hours": 0.0})
             entry["cost"] += item.computed_amount
             if item.computed_quantity and item.unit and "OCPU" in item.unit.upper():
@@ -185,15 +192,19 @@ class OCIFinOpsCollector:
                 ],
             )
 
-        request = oci.usage_api.models.RequestSummarizedUsagesDetails(
-            tenant_id=self.tenant_id,
-            time_usage_started=start,
-            time_usage_ended=end,
-            granularity="DAILY",
-            query_type="COST",
-            group_by=group_by,
-            filter=filters,
-        )
+        kwargs = {
+            "tenant_id": self.tenant_id,
+            "time_usage_started": start,
+            "time_usage_ended": end,
+            "granularity": "DAILY",
+            "query_type": "COST",
+            "group_by": group_by,
+        }
+        if filters:
+            kwargs["filter"] = filters
+        if "compartmentName" in group_by:
+            kwargs["compartment_depth"] = 3
+        request = oci.usage_api.models.RequestSummarizedUsagesDetails(**kwargs)
 
         resp = self.usage_client.request_summarized_usages(request)
         return resp.data.items or []
@@ -240,15 +251,25 @@ class OCIFinOpsCollector:
         if "windows" in lower:
             return "Windows OS Licensing"
 
-        # Regra 2: Oracle OCPU - <Family> - ...
+        # Regra 2: GPU<digits>
+        match = re.search(r"GPU(\d+)", sku_name, re.IGNORECASE)
+        if match:
+            return f"GPU{match.group(1)}"
+
+        # Regra 3: "Oracle OCPU - <Family> - OCPU/GPU Per Hour" (long format)
         match = re.match(r"Oracle OCPU\s*-\s*(.+?)(?:\s*-\s*(?:OCPU|GPU).*)?$", sku_name, re.IGNORECASE)
         if match:
             return match.group(1).strip()
 
-        # Regra 3: GPU<digits>
-        match = re.search(r"GPU(\d+)", sku_name, re.IGNORECASE)
+        # Regra 4: "<Family> - <Variant> - Memory" → strip " - Memory"
+        # Covers: "Standard - E4 - Memory", "Optimized - X9 - Memory"
+        match = re.match(r"^(.+?)\s*-\s*Memory$", sku_name, re.IGNORECASE)
         if match:
-            return f"GPU{match.group(1)}"
+            return match.group(1).strip()
+
+        # Regra 5: Direct shape names like "Standard - X9", "Optimized - X9"
+        if re.match(r"^(Standard|Optimized|DenseIO|BM\.)", sku_name, re.IGNORECASE):
+            return sku_name.strip()
 
         return "Other"
 
