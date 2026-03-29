@@ -84,9 +84,9 @@ class ReportGenerator:
         report_data["deltas"] = self._calc_deltas(report_data, history)
         report_data["history"] = history
 
-        # Gera dashboard HTML
+        # Gera dashboard HTML legado (mantido como backup, React SPA é o index.html)
         os.makedirs(self.output_dir, exist_ok=True)
-        dashboard_path = os.path.join(self.output_dir, "index.html")
+        dashboard_path = os.path.join(self.output_dir, "dashboard_legacy.html")
         template = self.env.get_template("dashboard.html")
         html = template.render(**report_data)
 
