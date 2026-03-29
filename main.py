@@ -14,6 +14,7 @@ import json
 import logging
 import os
 import sys
+import time
 from datetime import datetime, timedelta
 
 import yaml
@@ -138,6 +139,8 @@ def main():
     logger.info("Período: %s a %s", start_date, end_date)
     logger.info("Gerado em: %s", datetime.now().strftime('%d/%m/%Y %H:%M'))
 
+    collector_metrics = {}
+
     # 1. Coleta OTRS (múltiplas filas)
     def _empty_queue(name):
         return {
@@ -158,6 +161,7 @@ def main():
     otrs_daily_queues = []
 
     if not args.skip_otrs:
+        t0 = time.time()
         try:
             from collectors.otrs_collector import OTRSCollector
             logger.info("Coletando chamados...")
@@ -167,15 +171,18 @@ def main():
             with open(OTRS_CACHE_FILE, "w") as f:
                 json.dump(otrs_queues, f, indent=2)
             logger.info("Cache salvo")
+            collector_metrics["otrs"] = {"status": "ok", "duration_s": round(time.time() - t0, 1)}
         except Exception as e:
             logger.error("OTRS ERRO: %s", e)
             logger.exception("Detalhes:")
             failures.append(f"OTRS: {e}")
+            collector_metrics["otrs"] = {"status": "error", "duration_s": round(time.time() - t0, 1)}
             logger.info("Tentando usar cache...")
             otrs_queues = _load_otrs_cache(otrs_queues)
     else:
         logger.info("Pulando OTRS (--skip-otrs), usando cache...")
         otrs_queues = _load_otrs_cache(otrs_queues)
+        collector_metrics["otrs"] = {"status": "skip", "duration_s": 0.0}
 
     # Compatibilidade: otrs_data aponta para a primeira fila
     otrs_data = otrs_queues[0] if otrs_queues else _empty_queue("CLOUD")
@@ -185,6 +192,7 @@ def main():
 
     # AWS
     if not args.skip_aws and config.get("aws", {}).get("enabled"):
+        t0 = time.time()
         try:
             from collectors.aws_collector import AWSCollector
             logger.info("Coletando custos AWS...")
@@ -192,15 +200,19 @@ def main():
             aws_data = aws.collect()
             cloud_costs.append(aws_data)
             logger.info("AWS Total: %s %.2f", aws_data['currency'], aws_data['total_cost'])
+            collector_metrics["aws"] = {"status": "ok", "duration_s": round(time.time() - t0, 1)}
         except Exception as e:
             logger.error("AWS ERRO: %s", e)
             logger.exception("Detalhes:")
             failures.append(f"AWS: {e}")
+            collector_metrics["aws"] = {"status": "error", "duration_s": round(time.time() - t0, 1)}
     else:
         logger.info("Pulando AWS")
+        collector_metrics["aws"] = {"status": "skip", "duration_s": 0.0}
 
     # OCI
     if not args.skip_oci and config.get("oci", {}).get("enabled"):
+        t0 = time.time()
         try:
             from collectors.oci_collector import OCICollector
             logger.info("Coletando custos OCI...")
@@ -208,16 +220,20 @@ def main():
             oci_data = oci_coll.collect()
             cloud_costs.append(oci_data)
             logger.info("OCI Total: %s %.2f", oci_data['currency'], oci_data['total_cost'])
+            collector_metrics["oci"] = {"status": "ok", "duration_s": round(time.time() - t0, 1)}
         except Exception as e:
             logger.error("OCI ERRO: %s", e)
             logger.exception("Detalhes:")
             failures.append(f"OCI: {e}")
+            collector_metrics["oci"] = {"status": "error", "duration_s": round(time.time() - t0, 1)}
     else:
         logger.info("Pulando OCI")
+        collector_metrics["oci"] = {"status": "skip", "duration_s": 0.0}
 
     # OCI FinOps (breakdown detalhado)
     finops_data = None
     if not args.skip_oci and config.get("oci", {}).get("enabled"):
+        t0 = time.time()
         try:
             from collectors.oci_finops_collector import OCIFinOpsCollector
             logger.info("Coletando OCI FinOps...")
@@ -227,12 +243,17 @@ def main():
                         len(finops_data["by_compartment"]),
                         len(finops_data["by_service"]),
                         len(finops_data["recommendations"]))
+            collector_metrics["oci_finops"] = {"status": "ok", "duration_s": round(time.time() - t0, 1)}
         except Exception as e:
             logger.error("OCI FinOps ERRO: %s", e)
             logger.exception("Detalhes:")
+            collector_metrics["oci_finops"] = {"status": "error", "duration_s": round(time.time() - t0, 1)}
+    else:
+        collector_metrics["oci_finops"] = {"status": "skip", "duration_s": 0.0}
 
     # Golden Cloud
     if config.get("golden_cloud", {}).get("enabled"):
+        t0 = time.time()
         try:
             from collectors.golden_collector import GoldenCloudCollector
             logger.info("Coletando custos Golden Cloud...")
@@ -242,10 +263,14 @@ def main():
             logger.info("Golden Cloud Total: %s %.2f (%s)",
                         golden_data['currency'], golden_data['total_cost'],
                         golden_data.get('status', ''))
+            collector_metrics["golden_cloud"] = {"status": "ok", "duration_s": round(time.time() - t0, 1)}
         except Exception as e:
             logger.error("Golden Cloud ERRO: %s", e)
             logger.exception("Detalhes:")
             failures.append(f"Golden Cloud: {e}")
+            collector_metrics["golden_cloud"] = {"status": "error", "duration_s": round(time.time() - t0, 1)}
+    else:
+        collector_metrics["golden_cloud"] = {"status": "skip", "duration_s": 0.0}
 
     # Histórico mensal (últimos 3 meses completos)
     monthly_costs = {}
@@ -277,6 +302,7 @@ def main():
     # Monday.com
     monday_boards = []
     if config.get("monday", {}).get("enabled"):
+        t0 = time.time()
         try:
             from collectors.monday_collector import MondayCollector
             logger.info("Coletando projetos Monday.com...")
@@ -284,10 +310,19 @@ def main():
             monday_boards = monday.collect()
             total_items = sum(b["total_projects"] for b in monday_boards)
             logger.info("Monday.com: %d boards, %d itens", len(monday_boards), total_items)
+            collector_metrics["monday"] = {"status": "ok", "duration_s": round(time.time() - t0, 1)}
         except Exception as e:
             logger.error("Monday.com ERRO: %s", e)
             logger.exception("Detalhes:")
             failures.append(f"Monday.com: {e}")
+            collector_metrics["monday"] = {"status": "error", "duration_s": round(time.time() - t0, 1)}
+    else:
+        collector_metrics["monday"] = {"status": "skip", "duration_s": 0.0}
+
+    # Calcula total de tempo dos coletores
+    collector_metrics["total_s"] = round(
+        sum(m["duration_s"] for m in collector_metrics.values() if isinstance(m, dict)), 1
+    )
 
     # 3. Gera relatório
     try:
@@ -295,7 +330,7 @@ def main():
         logger.info("Gerando dashboard e e-mail...")
         generator = ReportGenerator(config)
         # TODO: aba "Diário (D-1)" desabilitada temporariamente
-        result = generator.generate(otrs_data, cloud_costs, monday_boards=monday_boards, otrs_queues=otrs_queues, otrs_daily_queues=[], save_history=not args.refresh, monthly_costs=monthly_costs, finops_data=finops_data)
+        result = generator.generate(otrs_data, cloud_costs, monday_boards=monday_boards, otrs_queues=otrs_queues, otrs_daily_queues=[], save_history=not args.refresh, monthly_costs=monthly_costs, finops_data=finops_data, collector_metrics=collector_metrics)
         logger.info("Dashboard: %s", result['dashboard_path'])
         # Salva JSON para o frontend React
         report_json_path = "/opt/weekly-report/data/report-data.json"

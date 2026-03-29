@@ -2,6 +2,7 @@
 Gerador de relatório: consolida dados e renderiza templates.
 """
 
+import calendar
 import json
 import logging
 import os
@@ -23,7 +24,7 @@ class ReportGenerator:
         self.base_url = config["dashboard"].get("base_url", "")
         self.env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 
-    def generate(self, otrs_data: dict, cloud_costs: list, monday_boards: list = None, otrs_queues: list = None, otrs_daily_queues: list = None, save_history: bool = True, monthly_costs: dict = None, finops_data: dict = None) -> dict:
+    def generate(self, otrs_data: dict, cloud_costs: list, monday_boards: list = None, otrs_queues: list = None, otrs_daily_queues: list = None, save_history: bool = True, monthly_costs: dict = None, finops_data: dict = None, collector_metrics: dict = None) -> dict:
         """
         Gera o relatório completo.
 
@@ -85,6 +86,15 @@ class ReportGenerator:
         report_data["deltas"] = self._calc_deltas(report_data, history)
         report_data["history"] = history
 
+        # Forecast de custo mensal
+        report_data["forecasts"] = self._calc_forecasts(cloud_costs, total_brl)
+
+        # Cloud Efficiency Score
+        report_data["efficiency_score"] = self._calc_efficiency_score(report_data)
+
+        # Métricas dos coletores
+        report_data["collector_metrics"] = collector_metrics or {}
+
         # Gera dashboard HTML legado (mantido como backup, React SPA é o index.html)
         os.makedirs(self.output_dir, exist_ok=True)
         dashboard_path = os.path.join(self.output_dir, "dashboard_legacy.html")
@@ -117,6 +127,84 @@ class ReportGenerator:
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as f:
             json.dump(data, f, indent=2, default=str)
+
+    @staticmethod
+    def _calc_forecasts(cloud_costs: list, total_brl: float) -> dict:
+        """Calcula forecast de custo mensal por provider."""
+        now = datetime.now()
+        days_elapsed = now.day
+        days_total = calendar.monthrange(now.year, now.month)[1]
+
+        forecasts = {}
+        for c in cloud_costs:
+            provider = c.get("provider", "")
+            accumulated = c.get("total_cost_brl", c.get("total_cost", 0.0))
+            if days_elapsed > 0:
+                estimated = round(accumulated / days_elapsed * days_total, 2)
+            else:
+                estimated = 0.0
+            forecasts[provider] = {
+                "accumulated_brl": round(accumulated, 2),
+                "estimated_brl": estimated,
+                "days_elapsed": days_elapsed,
+                "days_total": days_total,
+            }
+
+        # Total across all providers
+        if days_elapsed > 0:
+            total_estimated = round(total_brl / days_elapsed * days_total, 2)
+        else:
+            total_estimated = 0.0
+        forecasts["total"] = {
+            "accumulated_brl": round(total_brl, 2),
+            "estimated_brl": total_estimated,
+            "days_elapsed": days_elapsed,
+            "days_total": days_total,
+        }
+
+        return forecasts
+
+    @staticmethod
+    def _calc_efficiency_score(report_data: dict) -> int | None:
+        """Calcula Cloud Efficiency Score (0-100) com base em recomendações e SLA."""
+        finops = report_data.get("finops")
+        if finops is None:
+            return None
+
+        score = 100
+
+        # Analisa recomendações FinOps
+        recommendations = finops.get("recommendations", [])
+        anomalia_deductions = 0
+        for rec in recommendations:
+            title = rec.get("title", "")
+            detail = rec.get("detail", "")
+            if "Windows" in title:
+                score -= 15
+            if "concentra" in title.lower():
+                score -= 10
+            if "anomalia" in title.lower():
+                if anomalia_deductions < 20:
+                    deduct = min(10, 20 - anomalia_deductions)
+                    score -= deduct
+                    anomalia_deductions += deduct
+            if "OKE" in title:
+                score -= 5
+            if "MySQL" in title and "storage" in detail:
+                score -= 5
+
+        # Analisa SLA da primeira fila
+        otrs_queues = report_data.get("otrs_queues", [])
+        if otrs_queues:
+            first_queue = otrs_queues[0]
+            pct_first_response = first_queue.get("pct_first_response")
+            pct_resolution = first_queue.get("pct_resolution")
+            if pct_first_response is not None and pct_first_response < 90:
+                score -= 10
+            if pct_resolution is not None and pct_resolution < 90:
+                score -= 10
+
+        return max(0, score)
 
     def _get_dollar_rate(self) -> float:
         """Busca cotação comercial USD/BRL via Frankfurter API (taxas do BCE)."""
