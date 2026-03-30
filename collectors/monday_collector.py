@@ -103,6 +103,8 @@ class MondayCollector:
                 status = cols.get("Status") or "Sem status"
                 pessoa = cols.get("Pessoa") or ""
                 data_col = cols.get("Data") or ""
+                due_date = cols.get("Prev. Conclusão") or ""
+                new_due_date = cols.get("Nova Prev. Conclusão") or ""
 
                 # Subitems
                 subitems = []
@@ -136,6 +138,8 @@ class MondayCollector:
                     "status": status,
                     "person": pessoa,
                     "date": data_col,
+                    "due_date": due_date,
+                    "new_due_date": new_due_date,
                     "subitems": subitems,
                     "subitems_total": sub_total,
                     "subitems_done": sub_done,
