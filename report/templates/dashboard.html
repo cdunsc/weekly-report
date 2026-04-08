@@ -814,8 +814,8 @@
                         <th>Status</th>
                         <th>Progresso</th>
                         <th>Início</th>
-                        <th>Prev. Conclusão</th>
-                        <th>Nova Prev.</th>
+                        <th style="white-space: nowrap;">Prev. Conclusão</th>
+                        <th style="white-space: nowrap;">Nova Prev.</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -845,7 +845,7 @@
             {% elif board.projects %}
             <h2>{{ board.board_name }}</h2>
             <table class="project-table">
-                <thead><tr><th>Projeto</th><th>Grupo</th><th>Responsável</th><th>Status</th><th>Data</th><th>Subtarefas</th></tr></thead>
+                <thead><tr><th>Projeto</th><th>Grupo</th><th>Responsável</th><th>Status</th><th>Data</th><th style="white-space: nowrap;">Prev. Conclusão</th><th style="white-space: nowrap;">Nova Prev.</th><th>Subtarefas</th></tr></thead>
                 <tbody>
                 {% for item in board.projects %}
                 <tr>
@@ -857,6 +857,8 @@
                         {{ item.status }}
                     </td>
                     <td style="white-space: nowrap; font-size: 0.82rem;">{{ item.date or '—' }}</td>
+                    <td style="white-space: nowrap; font-size: 0.82rem;">{{ item.due_date or '—' }}</td>
+                    <td style="white-space: nowrap; font-size: 0.82rem;">{{ item.new_due_date or '—' }}</td>
                     <td>
                         {% if item.subitems_total > 0 %}
                         <span class="subitem-bar"><span class="subitem-bar-fill" style="width: {{ (item.subitems_done / item.subitems_total * 100)|round }}%"></span></span>

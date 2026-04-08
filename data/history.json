@@ -402,5 +402,2543 @@
         "pct_resolution": 97.3
       }
     }
+  },
+  {
+    "date": "28/03/2026 15:22",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 7,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 160402.48,
+      "OCI": 30112.76,
+      "Golden Cloud": 34959.93
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 160402.48,
+        "currency": "USD",
+        "total_cost_brl": 843091.48,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 43950.96
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 39571.86
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 30399.56
+          },
+          {
+            "name": "network-services",
+            "cost": 15356.78
+          },
+          {
+            "name": "charging-service",
+            "cost": 14942.64
+          },
+          {
+            "name": "devops-services",
+            "cost": 3687.96
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2628.91
+          },
+          {
+            "name": "develop-services",
+            "cost": 2469.24
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2304.33
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1632.78
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 27035.9
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23054.41
+          },
+          {
+            "service": "Tax",
+            "cost": 19220.6
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18344.19
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13113.64
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 30112.76,
+        "currency": "BRL",
+        "total_cost_brl": 30112.76,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 19699.52
+          },
+          {
+            "service": "MySQL",
+            "cost": 5867.88
+          },
+          {
+            "service": "Block Storage",
+            "cost": 1957.33
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1192.58
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 969.58
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 34959.93,
+        "currency": "BRL",
+        "total_cost_brl": 34959.93
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 7,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "28/03/2026 15:27",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 7,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 160402.48,
+      "OCI": 30112.76,
+      "Golden Cloud": 36283.79
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 160402.48,
+        "currency": "USD",
+        "total_cost_brl": 843091.48,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 43950.96
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 39571.86
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 30399.56
+          },
+          {
+            "name": "network-services",
+            "cost": 15356.78
+          },
+          {
+            "name": "charging-service",
+            "cost": 14942.64
+          },
+          {
+            "name": "devops-services",
+            "cost": 3687.96
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2628.91
+          },
+          {
+            "name": "develop-services",
+            "cost": 2469.24
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2304.33
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1632.78
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 27035.9
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23054.41
+          },
+          {
+            "service": "Tax",
+            "cost": 19220.6
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18344.19
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13113.64
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 30112.76,
+        "currency": "BRL",
+        "total_cost_brl": 30112.76,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 19699.52
+          },
+          {
+            "service": "MySQL",
+            "cost": 5867.88
+          },
+          {
+            "service": "Block Storage",
+            "cost": 1957.33
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1192.58
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 969.58
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 36283.79,
+        "currency": "BRL",
+        "total_cost_brl": 36283.79
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 7,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "28/03/2026 15:43",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 7,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 160402.48,
+      "OCI": 30112.76,
+      "Golden Cloud": 36283.79
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 160402.48,
+        "currency": "USD",
+        "total_cost_brl": 843091.48,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 43950.96
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 39571.86
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 30399.56
+          },
+          {
+            "name": "network-services",
+            "cost": 15356.78
+          },
+          {
+            "name": "charging-service",
+            "cost": 14942.64
+          },
+          {
+            "name": "devops-services",
+            "cost": 3687.96
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2628.91
+          },
+          {
+            "name": "develop-services",
+            "cost": 2469.24
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2304.33
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1632.78
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 27035.9
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23054.41
+          },
+          {
+            "service": "Tax",
+            "cost": 19220.6
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18344.19
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13113.64
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 30112.76,
+        "currency": "BRL",
+        "total_cost_brl": 30112.76,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 19699.52
+          },
+          {
+            "service": "MySQL",
+            "cost": 5867.88
+          },
+          {
+            "service": "Block Storage",
+            "cost": 1957.33
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1192.58
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 969.58
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 36283.79,
+        "currency": "BRL",
+        "total_cost_brl": 36283.79
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 7,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 14:04",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31169.55,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31169.55,
+        "currency": "BRL",
+        "total_cost_brl": 31169.55,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20392.54
+          },
+          {
+            "service": "MySQL",
+            "cost": 6070.01
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2026.6
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1234.29
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1007.2
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 14:05",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31216.07,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31216.07,
+        "currency": "BRL",
+        "total_cost_brl": 31216.07,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20423.0
+          },
+          {
+            "service": "MySQL",
+            "cost": 6079.03
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2029.61
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1236.11
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1008.85
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 14:19",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31216.07,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31216.07,
+        "currency": "BRL",
+        "total_cost_brl": 31216.07,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20423.0
+          },
+          {
+            "service": "MySQL",
+            "cost": 6079.03
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2029.61
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1236.11
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1008.85
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 14:20",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31216.07,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31216.07,
+        "currency": "BRL",
+        "total_cost_brl": 31216.07,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20423.0
+          },
+          {
+            "service": "MySQL",
+            "cost": 6079.03
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2029.61
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1236.11
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1008.85
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 17:43",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31326.92,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31326.92,
+        "currency": "BRL",
+        "total_cost_brl": 31326.92,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20496.36
+          },
+          {
+            "service": "MySQL",
+            "cost": 6101.11
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2035.64
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1239.73
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1012.99
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 17:44",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31326.92,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31326.92,
+        "currency": "BRL",
+        "total_cost_brl": 31326.92,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20496.36
+          },
+          {
+            "service": "MySQL",
+            "cost": 6101.11
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2035.64
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1239.73
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1012.99
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 17:44",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31326.92,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31326.92,
+        "currency": "BRL",
+        "total_cost_brl": 31326.92,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20496.36
+          },
+          {
+            "service": "MySQL",
+            "cost": 6101.11
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2035.64
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1239.73
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1012.99
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 17:45",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31326.92,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31326.92,
+        "currency": "BRL",
+        "total_cost_brl": 31326.92,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20496.36
+          },
+          {
+            "service": "MySQL",
+            "cost": 6101.11
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2035.64
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1239.73
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1012.99
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 17:49",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31326.92,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31326.92,
+        "currency": "BRL",
+        "total_cost_brl": 31326.92,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20496.36
+          },
+          {
+            "service": "MySQL",
+            "cost": 6101.11
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2035.64
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1239.73
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1012.99
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 18:57",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31378.03,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31378.03,
+        "currency": "BRL",
+        "total_cost_brl": 31378.03,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20530.46
+          },
+          {
+            "service": "MySQL",
+            "cost": 6110.87
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2038.65
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1241.55
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1014.78
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 19:20",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31421.16,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31421.16,
+        "currency": "BRL",
+        "total_cost_brl": 31421.16,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20557.75
+          },
+          {
+            "service": "MySQL",
+            "cost": 6119.62
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2041.66
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1243.36
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1016.43
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "29/03/2026 19:22",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 164966.95,
+      "OCI": 31421.16,
+      "Golden Cloud": 37574.78
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 164966.95,
+        "currency": "USD",
+        "total_cost_brl": 867082.79,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 44940.85
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 40561.68
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 31571.53
+          },
+          {
+            "name": "network-services",
+            "cost": 15785.6
+          },
+          {
+            "name": "charging-service",
+            "cost": 15395.74
+          },
+          {
+            "name": "devops-services",
+            "cost": 3860.6
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2673.1
+          },
+          {
+            "name": "develop-services",
+            "cost": 2552.71
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2388.15
+          },
+          {
+            "name": "BI SURF",
+            "cost": 1659.76
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28001.47
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 23675.61
+          },
+          {
+            "service": "Tax",
+            "cost": 19653.46
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 18797.24
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 13545.95
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 31421.16,
+        "currency": "BRL",
+        "total_cost_brl": 31421.16,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 20557.75
+          },
+          {
+            "service": "MySQL",
+            "cost": 6119.62
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2041.66
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1243.36
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1016.43
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 37574.78,
+        "currency": "BRL",
+        "total_cost_brl": 37574.78
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 128,
+        "backlog": 36,
+        "avg_first_response": 3.68,
+        "avg_resolution": 4.46,
+        "pct_first_response": 46.7,
+        "pct_resolution": 97.3
+      }
+    }
+  },
+  {
+    "date": "30/03/2026 13:41",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 169698.97,
+      "OCI": 32130.15,
+      "Golden Cloud": 38865.77
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 169698.97,
+        "currency": "USD",
+        "total_cost_brl": 891954.76,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 45976.42
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 41553.3
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 32830.98
+          },
+          {
+            "name": "network-services",
+            "cost": 16242.3
+          },
+          {
+            "name": "charging-service",
+            "cost": 15816.25
+          },
+          {
+            "name": "devops-services",
+            "cost": 4055.34
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2713.72
+          },
+          {
+            "name": "develop-services",
+            "cost": 2639.99
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2472.76
+          },
+          {
+            "name": "shared-services",
+            "cost": 1692.49
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28967.04
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 24348.97
+          },
+          {
+            "service": "Tax",
+            "cost": 20106.41
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 19279.25
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 14003.63
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 32130.15,
+        "currency": "BRL",
+        "total_cost_brl": 32130.15,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 21001.29
+          },
+          {
+            "service": "MySQL",
+            "cost": 6262.53
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2093.33
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1276.0
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1045.36
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 38865.77,
+        "currency": "BRL",
+        "total_cost_brl": 38865.77
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 127,
+        "backlog": 37,
+        "avg_first_response": 4.06,
+        "avg_resolution": 4.9,
+        "pct_first_response": 46.1,
+        "pct_resolution": 96.5
+      }
+    }
+  },
+  {
+    "date": "30/03/2026 13:41",
+    "period": {
+      "start": "2026-03-20",
+      "end": "2026-03-26"
+    },
+    "opened": 18,
+    "closed": 18,
+    "backlog": 3,
+    "avg_first_response": 7.52,
+    "avg_resolution": 11.19,
+    "dollar_rate": 5.2561,
+    "cloud_costs": {
+      "AWS": 169698.97,
+      "OCI": 32130.15,
+      "Golden Cloud": 38865.77
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 169698.97,
+        "currency": "USD",
+        "total_cost_brl": 891954.76,
+        "accounts": [
+          {
+            "name": "production-services",
+            "cost": 45976.42
+          },
+          {
+            "name": "Surf Telecom",
+            "cost": 41553.3
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 32830.98
+          },
+          {
+            "name": "network-services",
+            "cost": 16242.3
+          },
+          {
+            "name": "charging-service",
+            "cost": 15816.25
+          },
+          {
+            "name": "devops-services",
+            "cost": 4055.34
+          },
+          {
+            "name": "datascience-services",
+            "cost": 2713.72
+          },
+          {
+            "name": "develop-services",
+            "cost": 2639.99
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 2472.76
+          },
+          {
+            "name": "shared-services",
+            "cost": 1692.49
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 28967.04
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 24348.97
+          },
+          {
+            "service": "Tax",
+            "cost": 20106.41
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 19279.25
+          },
+          {
+            "service": "Amazon Virtual Private Cloud",
+            "cost": 14003.63
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 32130.15,
+        "currency": "BRL",
+        "total_cost_brl": 32130.15,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 21001.29
+          },
+          {
+            "service": "MySQL",
+            "cost": 6262.53
+          },
+          {
+            "service": "Block Storage",
+            "cost": 2093.33
+          },
+          {
+            "service": "Object Storage",
+            "cost": 1276.0
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 1045.36
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 38865.77,
+        "currency": "BRL",
+        "total_cost_brl": 38865.77
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 18,
+        "closed": 18,
+        "backlog": 3,
+        "avg_first_response": 7.52,
+        "avg_resolution": 11.19,
+        "pct_first_response": 90.9,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 128,
+        "closed": 127,
+        "backlog": 37,
+        "avg_first_response": 4.06,
+        "avg_resolution": 4.9,
+        "pct_first_response": 46.1,
+        "pct_resolution": 96.5
+      }
+    }
+  },
+  {
+    "date": "03/04/2026 09:04",
+    "period": {
+      "start": "2026-03-27",
+      "end": "2026-04-02"
+    },
+    "opened": 28,
+    "closed": 27,
+    "backlog": 7,
+    "avg_first_response": 2.51,
+    "avg_resolution": 3.34,
+    "dollar_rate": 5.1818,
+    "cloud_costs": {
+      "AWS": 18813.86,
+      "OCI": 2331.52,
+      "Golden Cloud": 4129.08
+    },
+    "cloud_details": {
+      "AWS": {
+        "total_cost": 18813.86,
+        "currency": "USD",
+        "total_cost_brl": 97489.66,
+        "accounts": [
+          {
+            "name": "Surf Telecom",
+            "cost": 6949.8
+          },
+          {
+            "name": "production-services",
+            "cost": 5887.35
+          },
+          {
+            "name": "coremvne-services",
+            "cost": 2635.19
+          },
+          {
+            "name": "network-services",
+            "cost": 983.49
+          },
+          {
+            "name": "BI SURF",
+            "cost": 681.92
+          },
+          {
+            "name": "charging-service",
+            "cost": 681.24
+          },
+          {
+            "name": "devops-services",
+            "cost": 290.42
+          },
+          {
+            "name": "cdrlegacy-services",
+            "cost": 164.53
+          },
+          {
+            "name": "datascience-services",
+            "cost": 158.74
+          },
+          {
+            "name": "develop-services",
+            "cost": 154.84
+          }
+        ],
+        "top_services": [
+          {
+            "service": "Tax",
+            "cost": 5445.34
+          },
+          {
+            "service": "Amazon Relational Database Service",
+            "cost": 4188.05
+          },
+          {
+            "service": "Savings Plans for AWS Compute usage",
+            "cost": 2896.7
+          },
+          {
+            "service": "EC2 - Other",
+            "cost": 922.0
+          },
+          {
+            "service": "Amazon Simple Storage Service",
+            "cost": 889.61
+          }
+        ]
+      },
+      "OCI": {
+        "total_cost": 2331.52,
+        "currency": "BRL",
+        "total_cost_brl": 2331.52,
+        "top_services": [
+          {
+            "service": "Compute",
+            "cost": 1391.92
+          },
+          {
+            "service": "MySQL",
+            "cost": 555.0
+          },
+          {
+            "service": "Block Storage",
+            "cost": 170.99
+          },
+          {
+            "service": "Object Storage",
+            "cost": 98.45
+          },
+          {
+            "service": "Container Engine for Kubernetes",
+            "cost": 91.35
+          }
+        ]
+      },
+      "Golden Cloud": {
+        "total_cost": 4129.08,
+        "currency": "BRL",
+        "total_cost_brl": 4129.08
+      }
+    },
+    "queues": {
+      "CLOUD": {
+        "opened": 28,
+        "closed": 27,
+        "backlog": 7,
+        "avg_first_response": 2.51,
+        "avg_resolution": 3.34,
+        "pct_first_response": 100.0,
+        "pct_resolution": 100.0
+      },
+      "TI": {
+        "opened": 142,
+        "closed": 159,
+        "backlog": 34,
+        "avg_first_response": 1.04,
+        "avg_resolution": 1.87,
+        "pct_first_response": 79.1,
+        "pct_resolution": 99.2
+      }
+    }
   }
 ]

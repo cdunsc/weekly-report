@@ -7,10 +7,13 @@ no primeiro acesso e serve o dashboard protegido.
 Roda em 127.0.0.1:8080, proxy via nginx.
 """
 
+import csv
 import json
 import logging
 import os
 import secrets
+import subprocess
+import tempfile
 from datetime import datetime
 from functools import wraps
 
@@ -105,46 +108,11 @@ def login_required(f):
 
 
 def _send_reset_email(to_email: str, username: str, reset_url: str):
-    """Envia e-mail de reset de senha via Microsoft Graph API."""
-    try:
-        cfg = _load_config()
-        email_cfg = cfg["email"]
-
-        from delivery.email_sender import EmailSender
-        sender = EmailSender(email_cfg)
-
-        html_body = f"""
-        <div style="font-family: 'Segoe UI', sans-serif; max-width: 500px; margin: 0 auto;
-                    background: #1e293b; color: #e2e8f0; padding: 32px; border-radius: 12px;">
-            <h2 style="color: #3b82f6; margin-bottom: 16px;">Surf Telecom - Reset de Senha</h2>
-            <p>Ola <strong>{username}</strong>,</p>
-            <p>Recebemos uma solicitacao para redefinir sua senha.</p>
-            <p style="margin: 24px 0;">
-                <a href="{reset_url}"
-                   style="background: #3b82f6; color: #fff; padding: 14px 28px;
-                          border-radius: 10px; text-decoration: none; font-weight: 600;
-                          display: inline-block;">
-                    Redefinir Minha Senha
-                </a>
-            </p>
-            <p style="color: #94a3b8; font-size: 0.85rem;">
-                Este link expira em <strong>1 hora</strong>.<br>
-                Se voce nao solicitou, ignore este e-mail.
-            </p>
-        </div>
-        """
-
-        # Envia direto usando Graph API (reutilizando o sender)
-        sender.to_addrs = [to_email]
-        sender.send(
-            subject="Surf Telecom - Redefinir Senha",
-            html_body=html_body,
-        )
-        logger.info("E-mail de reset enviado para %s", to_email)
-        return True
-    except Exception as e:
-        logger.error("Erro ao enviar e-mail de reset: %s", e)
-        return False
+    """Envia e-mail de reset de senha via shared email helper."""
+    import sys
+    sys.path.insert(0, "/opt/shared-auth")
+    from email_helper import send_reset_email
+    return send_reset_email(to_email, username, reset_url)
 
 
 # --- Routes ---
@@ -507,6 +475,375 @@ def report_data_api():
     with open(REPORT_DATA_FILE) as f:
         data = json.load(f)
     return jsonify(data)
+
+
+# --- SPEC User Creation API ---
+
+SPEC_SCRIPT = "/home/ubuntu/criar_usuario_spec.py"
+SPEC_VERIFY_SCRIPT = "/home/ubuntu/verificar_usuario_spec.py"
+
+
+@app.route("/dashboard/api/spec-users", methods=["POST"])
+@login_required
+def spec_users_api():
+    """
+    Cria usuários na plataforma SPEC.
+
+    Espera JSON:
+      { "users": [ {"nome": "...", "email": "...", "mvno": "..."}, ... ] }
+
+    Campos obrigatórios por usuário: nome, email.
+    Campo mvno é opcional (padrão: DESKTOP).
+
+    Credenciais SPEC são lidas do config.yaml / .env (nunca do request).
+    """
+    try:
+        data = request.get_json(force=True)
+    except Exception:
+        return jsonify({"status": "error", "message": "JSON inválido."}), 400
+
+    users = data.get("users")
+    if not users or not isinstance(users, list):
+        return jsonify({
+            "status": "error",
+            "message": "Campo 'users' é obrigatório e deve ser uma lista.",
+        }), 400
+
+    # Validar cada usuário
+    validated = []
+    errors = []
+    for i, u in enumerate(users):
+        nome = (u.get("nome") or "").strip()
+        email = (u.get("email") or "").strip()
+        mvno = (u.get("mvno") or "DESKTOP").strip()
+
+        if not nome or not email:
+            errors.append({
+                "index": i,
+                "nome": nome,
+                "email": email,
+                "error": "Campos 'nome' e 'email' são obrigatórios.",
+            })
+            continue
+
+        validated.append({"nome": nome, "email": email, "mvno": mvno})
+
+    if not validated:
+        return jsonify({
+            "status": "error",
+            "message": "Nenhum usuário válido na lista.",
+            "validation_errors": errors,
+        }), 400
+
+    # Carregar credenciais SPEC do config
+    try:
+        cfg = _load_config()
+        spec_cfg = cfg.get("spec", {})
+        spec_user = spec_cfg.get("username", "")
+        spec_pass = spec_cfg.get("password", "")
+    except Exception as e:
+        logger.error("Erro ao carregar config SPEC: %s", e)
+        return jsonify({
+            "status": "error",
+            "message": "Erro ao carregar configuração SPEC.",
+        }), 500
+
+    if not spec_user or not spec_pass:
+        return jsonify({
+            "status": "error",
+            "message": "Credenciais SPEC não configuradas. "
+                       "Defina SPEC_USERNAME e SPEC_PASSWORD no .env.",
+        }), 500
+
+    # Verificar se o script existe
+    if not os.path.isfile(SPEC_SCRIPT):
+        return jsonify({
+            "status": "error",
+            "message": f"Script não encontrado: {SPEC_SCRIPT}",
+        }), 500
+
+    # Gravar CSV temporário
+    tmp_csv = None
+    try:
+        tmp_csv = tempfile.NamedTemporaryFile(
+            mode="w",
+            suffix=".csv",
+            prefix="spec_users_",
+            dir="/tmp",
+            delete=False,
+            newline="",
+            encoding="utf-8",
+        )
+        writer = csv.DictWriter(tmp_csv, fieldnames=["nome", "email", "mvno"])
+        writer.writeheader()
+        for u in validated:
+            writer.writerow(u)
+        tmp_csv.close()
+
+        # Executar script
+        cmd = [
+            "python3", SPEC_SCRIPT,
+            "--usuario", spec_user,
+            "--senha", spec_pass,
+            "--csv", tmp_csv.name,
+        ]
+
+        logger.info(
+            "Executando criação SPEC para %d usuário(s) (por %s)",
+            len(validated),
+            session.get("user"),
+        )
+
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=600,  # 10 min max
+            env={**os.environ, "PYTHONUNBUFFERED": "1"},
+        )
+
+        output_lines = (result.stdout or "").strip().splitlines()
+        stderr_lines = (result.stderr or "").strip().splitlines()
+
+        # Interpretar resultados por usuário a partir do stdout
+        user_results = []
+        for u in validated:
+            # Procurar linhas relevantes para este email no output
+            user_output = [
+                line for line in output_lines
+                if u["email"].lower() in line.lower() or u["nome"].lower() in line.lower()
+            ]
+            # Determinar sucesso/falha
+            combined = " ".join(user_output).upper()
+            if "[CONCLUIDO]" in combined or "CRIADO E CONFIGURADO" in combined:
+                status = "success"
+            elif "[ERRO]" in combined:
+                status = "error"
+            elif any("[OK]" in line for line in user_output):
+                status = "partial"
+            else:
+                status = "unknown"
+
+            user_results.append({
+                "nome": u["nome"],
+                "email": u["email"],
+                "mvno": u["mvno"],
+                "status": status,
+                "output": user_output,
+            })
+
+        # Resumo
+        total_success = sum(1 for r in user_results if r["status"] == "success")
+        total_error = sum(1 for r in user_results if r["status"] == "error")
+
+        response = {
+            "status": "ok" if result.returncode == 0 else "error",
+            "summary": {
+                "total": len(validated),
+                "success": total_success,
+                "errors": total_error,
+                "other": len(validated) - total_success - total_error,
+            },
+            "results": user_results,
+            "script_exit_code": result.returncode,
+            "raw_output": output_lines,
+        }
+
+        if stderr_lines:
+            response["stderr"] = stderr_lines
+
+        if errors:
+            response["validation_errors"] = errors
+
+        status_code = 200 if result.returncode == 0 else 207
+        return jsonify(response), status_code
+
+    except subprocess.TimeoutExpired:
+        logger.error("Script SPEC excedeu timeout de 10 minutos")
+        return jsonify({
+            "status": "error",
+            "message": "Timeout: o script excedeu o limite de 10 minutos.",
+        }), 504
+
+    except Exception as e:
+        logger.error("Erro ao executar script SPEC: %s", e)
+        return jsonify({
+            "status": "error",
+            "message": f"Erro interno: {e}",
+        }), 500
+
+    finally:
+        if tmp_csv and os.path.exists(tmp_csv.name):
+            try:
+                os.unlink(tmp_csv.name)
+            except OSError:
+                pass
+
+
+@app.route("/dashboard/api/spec-users/verify", methods=["POST"])
+@login_required
+def spec_users_verify_api():
+    """
+    Verifica se usuários existem na plataforma SPEC e se a MVNO está ativa.
+
+    Espera JSON:
+      { "users": [ {"email": "..."}, ... ], "mvno": "SKY" }
+    """
+    try:
+        data = request.get_json(force=True)
+    except Exception:
+        return jsonify({"status": "error", "message": "JSON inválido."}), 400
+
+    users = data.get("users")
+    mvno = (data.get("mvno") or "DESKTOP").strip()
+
+    if not users or not isinstance(users, list):
+        return jsonify({
+            "status": "error",
+            "message": "Campo 'users' é obrigatório e deve ser uma lista.",
+        }), 400
+
+    emails = []
+    for u in users:
+        email = (u.get("email") or "").strip()
+        if email:
+            emails.append(email)
+
+    if not emails:
+        return jsonify({
+            "status": "error",
+            "message": "Nenhum email válido na lista.",
+        }), 400
+
+    # Carregar credenciais SPEC
+    try:
+        cfg = _load_config()
+        spec_cfg = cfg.get("spec", {})
+        spec_user = spec_cfg.get("username", "")
+        spec_pass = spec_cfg.get("password", "")
+    except Exception as e:
+        logger.error("Erro ao carregar config SPEC: %s", e)
+        return jsonify({
+            "status": "error",
+            "message": "Erro ao carregar configuração SPEC.",
+        }), 500
+
+    if not spec_user or not spec_pass:
+        return jsonify({
+            "status": "error",
+            "message": "Credenciais SPEC não configuradas.",
+        }), 500
+
+    if not os.path.isfile(SPEC_VERIFY_SCRIPT):
+        return jsonify({
+            "status": "error",
+            "message": f"Script não encontrado: {SPEC_VERIFY_SCRIPT}",
+        }), 500
+
+    # Gravar CSV temporário
+    tmp_csv = None
+    try:
+        tmp_csv = tempfile.NamedTemporaryFile(
+            mode="w",
+            suffix=".csv",
+            prefix="spec_verify_",
+            dir="/tmp",
+            delete=False,
+            newline="",
+            encoding="utf-8",
+        )
+        writer = csv.DictWriter(tmp_csv, fieldnames=["email"])
+        writer.writeheader()
+        for email in emails:
+            writer.writerow({"email": email})
+        tmp_csv.close()
+
+        cmd = [
+            "python3", SPEC_VERIFY_SCRIPT,
+            "--usuario", spec_user,
+            "--senha", spec_pass,
+            "--csv", tmp_csv.name,
+            "--mvno", mvno,
+        ]
+
+        logger.info(
+            "Verificando %d usuário(s) SPEC (MVNO: %s, por %s)",
+            len(emails), mvno, session.get("user"),
+        )
+
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=600,
+            env={**os.environ, "PYTHONUNBUFFERED": "1"},
+        )
+
+        output_lines = (result.stdout or "").strip().splitlines()
+
+        # Extrair JSON de resultados
+        json_results = []
+        for line in output_lines:
+            if line.startswith("[JSON_RESULTS]"):
+                try:
+                    json_results = json.loads(line[len("[JSON_RESULTS]"):])
+                except json.JSONDecodeError:
+                    pass
+
+        # Se não encontrou JSON, parse das linhas [RESULTADO]
+        if not json_results:
+            for line in output_lines:
+                if "[RESULTADO]" in line:
+                    parts = line.split("|")
+                    if len(parts) >= 3:
+                        email_part = parts[0].replace("[RESULTADO]", "").strip()
+                        exists_part = "exists=true" in parts[1]
+                        mvno_part = "mvno_ok=true" in parts[2]
+                        details = parts[3].strip() if len(parts) > 3 else ""
+                        json_results.append({
+                            "email": email_part,
+                            "exists": exists_part,
+                            "mvno_ok": mvno_part,
+                            "details": details,
+                        })
+
+        total = len(json_results)
+        ok = sum(1 for r in json_results if r.get("exists") and r.get("mvno_ok"))
+        no_mvno = sum(1 for r in json_results if r.get("exists") and not r.get("mvno_ok"))
+        not_found = sum(1 for r in json_results if not r.get("exists"))
+
+        return jsonify({
+            "status": "ok",
+            "mvno": mvno,
+            "summary": {
+                "total": total,
+                "ok": ok,
+                "no_mvno": no_mvno,
+                "not_found": not_found,
+            },
+            "results": json_results,
+        }), 200
+
+    except subprocess.TimeoutExpired:
+        logger.error("Script verificação SPEC excedeu timeout")
+        return jsonify({
+            "status": "error",
+            "message": "Timeout: verificação excedeu o limite de 10 minutos.",
+        }), 504
+
+    except Exception as e:
+        logger.error("Erro ao verificar SPEC: %s", e)
+        return jsonify({
+            "status": "error",
+            "message": f"Erro interno: {e}",
+        }), 500
+
+    finally:
+        if tmp_csv and os.path.exists(tmp_csv.name):
+            try:
+                os.unlink(tmp_csv.name)
+            except OSError:
+                pass
 
 
 def main():

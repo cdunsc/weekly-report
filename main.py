@@ -292,12 +292,37 @@ def main():
             logger.error("Erro ao coletar histórico OCI: %s", e)
 
     # Golden Cloud mensal (já vem do cache/scraping - usa details do collect)
+    _gc_month_map = {"jan": "01", "fev": "02", "mar": "03", "abr": "04", "mai": "05",
+                     "jun": "06", "jul": "07", "ago": "08", "set": "09", "out": "10",
+                     "nov": "11", "dez": "12"}
+
+    def _normalize_gc_month(raw: str) -> str:
+        """Converte 'jan 2026' para '2026-01'."""
+        parts = raw.strip().lower().split()
+        if len(parts) == 2 and parts[0] in _gc_month_map:
+            return f"{parts[1]}-{_gc_month_map[parts[0]]}"
+        return raw
+
     for c in cloud_costs:
         if c.get("provider") == "Golden Cloud" and c.get("details"):
             monthly_costs["Golden Cloud"] = [
-                {"month": d.get("month", ""), "cost": d.get("cost", 0), "currency": "BRL"}
-                for d in c["details"][-3:]  # últimos 3
+                {"month": _normalize_gc_month(d.get("month", "")), "cost": d.get("cost", 0), "currency": "BRL"}
+                for d in c["details"][-3:]
             ]
+
+    # Adiciona mês atual (parcial) ao histórico de cada provider
+    current_month = datetime.now().strftime("%Y-%m")
+    for c in cloud_costs:
+        provider = c.get("provider", "")
+        if provider in monthly_costs:
+            # Só adiciona se o mês atual não está na lista
+            existing_months = {m["month"] for m in monthly_costs[provider]}
+            if current_month not in existing_months:
+                monthly_costs[provider].append({
+                    "month": current_month,
+                    "cost": round(c["total_cost"], 2),
+                    "currency": c.get("currency", "USD"),
+                })
 
     # Monday.com
     monday_boards = []
@@ -319,6 +344,32 @@ def main():
     else:
         collector_metrics["monday"] = {"status": "skip", "duration_s": 0.0}
 
+    # Microsoft Defender
+    defender_data = {}
+    if config.get("defender", {}).get("enabled"):
+        t0 = time.time()
+        try:
+            from collectors.defender_collector import DefenderCollector
+            logger.info("Coletando dados do Microsoft Defender...")
+            defender = DefenderCollector({
+                "tenant_id": config["email"]["tenant_id"],
+                "client_id": config["email"]["client_id"],
+                "client_secret": config["email"]["client_secret"],
+            })
+            defender_data = defender.collect()
+            logger.info("Defender: %d alerts, %d devices, %d vulns",
+                        len(defender_data.get("alerts", [])),
+                        defender_data.get("devices", {}).get("total", 0),
+                        len(defender_data.get("vulnerabilities", [])))
+            collector_metrics["defender"] = {"status": "ok", "duration_s": round(time.time() - t0, 1)}
+        except Exception as e:
+            logger.error("Defender ERRO: %s", e)
+            logger.exception("Detalhes:")
+            failures.append(f"Defender: {e}")
+            collector_metrics["defender"] = {"status": "error", "duration_s": round(time.time() - t0, 1)}
+    else:
+        collector_metrics["defender"] = {"status": "skip", "duration_s": 0.0}
+
     # Calcula total de tempo dos coletores
     collector_metrics["total_s"] = round(
         sum(m["duration_s"] for m in collector_metrics.values() if isinstance(m, dict)), 1
@@ -330,7 +381,7 @@ def main():
         logger.info("Gerando dashboard e e-mail...")
         generator = ReportGenerator(config)
         # TODO: aba "Diário (D-1)" desabilitada temporariamente
-        result = generator.generate(otrs_data, cloud_costs, monday_boards=monday_boards, otrs_queues=otrs_queues, otrs_daily_queues=[], save_history=not args.refresh, monthly_costs=monthly_costs, finops_data=finops_data, collector_metrics=collector_metrics)
+        result = generator.generate(otrs_data, cloud_costs, monday_boards=monday_boards, otrs_queues=otrs_queues, otrs_daily_queues=[], save_history=not args.refresh, monthly_costs=monthly_costs, finops_data=finops_data, collector_metrics=collector_metrics, defender_data=defender_data)
         logger.info("Dashboard: %s", result['dashboard_path'])
         # Salva JSON para o frontend React
         report_json_path = "/opt/weekly-report/data/report-data.json"

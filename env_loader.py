@@ -50,6 +50,11 @@ def inject_secrets(config: dict) -> dict:
     teams = config.setdefault("teams", {})
     teams["webhook_url"] = _get("TEAMS_WEBHOOK_URL", teams.get("webhook_url", ""))
 
+    # SPEC
+    spec = config.setdefault("spec", {})
+    spec["username"] = _get("SPEC_USERNAME", spec.get("username", ""))
+    spec["password"] = _get("SPEC_PASSWORD", spec.get("password", ""))
+
     # Dashboard
     dashboard = config.setdefault("dashboard", {})
     dashboard["secret_key"] = _get(
